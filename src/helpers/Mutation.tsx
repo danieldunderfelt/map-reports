@@ -2,30 +2,35 @@ import React from 'react'
 import { Mutation as ApolloMutation } from 'react-apollo'
 import get from 'lodash/get'
 import { observer } from 'mobx-react'
+import { AnyFunction } from '../types/AnyFunction'
+
+type Props = {
+  onCompleted?: any
+  mutation: any
+  update?: AnyFunction
+  component: any
+  variables?: object
+  refetchQueries?: any[]
+}
 
 export const Mutation = observer(
   ({
     mutation,
     update,
     component: Component,
-    history = null,
-    completedRoute = '',
     variables,
     refetchQueries,
-    onCompleted = () => {
-      if (history && completedRoute) {
-        history.push(completedRoute)
-      }
-    },
+    onCompleted,
     ...rest
-  }) => (
+  }: Props) => (
+    // @ts-ignore
     <ApolloMutation
       refetchQueries={refetchQueries}
       onCompleted={onCompleted}
       mutation={mutation}
       update={update}
       variables={variables}>
-      {(mutate, { loading, error, data = {} }) => {
+      {(mutate, { loading, error, data = {} }): React.ReactNode => {
         const queryName = Object.keys(data)[0]
         const mutationResult = get(data, queryName, data)
 
@@ -44,10 +49,15 @@ export const Mutation = observer(
   ),
 )
 
+type MutateProps = {
+  mutation: any
+  update?: AnyFunction
+}
+
 export const mutate = ({
   mutation: staticMutation,
   update: staticUpdate,
-}) => Component => ({
+}: MutateProps): any => Component => ({
   mutation = staticMutation,
   update = staticUpdate,
   ...rest

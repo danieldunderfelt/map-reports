@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import { observer } from 'mobx-react'
 import { query } from '../helpers/Query'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
+import { AnyFunction } from '../types/AnyFunction'
 
 const reportsQuery = gql`
   {
@@ -13,9 +14,15 @@ const reportsQuery = gql`
   ${ReportFragment}
 `
 
+type Props = {
+  startPolling?: AnyFunction
+  stopPolling?: AnyFunction
+  data?: any
+}
+
 @query({ query: reportsQuery })
 @observer
-class ReportsList extends Component {
+class ReportsList extends React.Component<Props, any> {
   componentDidMount() {
     this.props.startPolling(500)
   }

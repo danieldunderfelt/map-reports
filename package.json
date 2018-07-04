@@ -2,8 +2,8 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
-    "server": "node server/server.js",
-    "server:dev": "nodemon server/server.js --watch server"
+    "server": "ts-node server/server.ts",
+    "server:dev": "nodemon --watch 'server/**/*' --exec 'ts-node' server/server.ts"
   },
   "dependencies": {
     "apollo-boost": "^0.1.10",
@@ -16,7 +16,9 @@
     "mobx-react": "^5.2.3",
     "react": "^16.4.1",
     "react-apollo": "^2.1.9",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "ts-node": "^7.0.0",
+    "typescript": "^2.9.2"
   },
   "devDependencies": {
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -27,6 +29,7 @@
     "eslint": "^5.0.1",
     "nodemon": "^1.17.5",
     "parcel-bundler": "^1.9.4",
-    "prettier": "^1.13.7"
+    "prettier": "^1.13.7",
+    "tslint": "^5.10.0"
   }
 }

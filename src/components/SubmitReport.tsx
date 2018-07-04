@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import { observer } from 'mobx-react'
 import { mutate } from '../helpers/Mutation'
 import { observable } from 'mobx'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
+import { AnyFunction } from '../types/AnyFunction'
 
 const createReportMutation = gql`
   mutation createReport($title: String, $body: String) {
@@ -14,9 +15,13 @@ const createReportMutation = gql`
   ${ReportFragment}
 `
 
+type Props = {
+  mutate?: AnyFunction
+}
+
 @mutate({ mutation: createReportMutation })
 @observer
-class SubmitReport extends Component {
+class SubmitReport extends React.Component<Props, any> {
   @observable
   report = {
     title: '',

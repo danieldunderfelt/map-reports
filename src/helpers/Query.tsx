@@ -4,6 +4,7 @@ import { createPaginator } from './paginate'
 import has from 'lodash/has'
 import get from 'lodash/get'
 import { observer } from 'mobx-react'
+import { AnyFunction } from '../types/AnyFunction'
 
 export const Query = observer(
   ({
@@ -14,7 +15,15 @@ export const Query = observer(
     paginate = true,
     pollInterval = 0,
     ...rest
+  }: {
+    query: any
+    component: any
+    variables?: object
+    showWhileLoading?: boolean
+    paginate?: boolean
+    pollInterval?: number
   }) => (
+    // @ts-ignore
     <ApolloQuery variables={variables} query={queryProp} pollInterval={pollInterval}>
       {({
         loading,
@@ -58,7 +67,11 @@ export const query = ({
   query: staticQuery,
   pollInterval: staticInterval = 0,
   getVariables = () => null,
-}) => Component => ({
+}: {
+  query: any
+  pollInterval?: number
+  getVariables?: AnyFunction
+}): Function => Component => ({
   query: queryProp = staticQuery,
   variables = getVariables(rest),
   pollInterval = staticInterval,
