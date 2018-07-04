@@ -2,3 +2,4 @@
 dist
 .cache
 graphql.config.json
+node_modules
