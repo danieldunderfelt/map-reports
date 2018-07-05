@@ -23,7 +23,6 @@ export const Query = observer(
     paginate?: boolean
     pollInterval?: number
   }) => (
-    // @ts-ignore
     <ApolloQuery variables={variables} query={queryProp} pollInterval={pollInterval}>
       {({
         loading,
@@ -55,7 +54,7 @@ export const Query = observer(
             refetch={refetch}
             error={error}
             fetchMore={paginate ? paginator : false}
-            data={{ ...get(rest, 'queryResult', {}), ...data }}
+            data={{ ...get(rest, 'data', {}), ...data }} // Merges another data prop with this data
           />
         )
       }}
@@ -73,10 +72,11 @@ export const query = ({
   getVariables?: AnyFunction
 }): Function => Component => ({
   query: queryProp = staticQuery,
-  variables = getVariables(rest),
   pollInterval = staticInterval,
   ...rest
 }) => {
+  const { variables = getVariables(rest) } = rest
+
   return (
     <Query
       query={queryProp}

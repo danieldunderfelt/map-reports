@@ -23,7 +23,6 @@ export const Mutation = observer(
     onCompleted,
     ...rest
   }: Props) => (
-    // @ts-ignore
     <ApolloMutation
       refetchQueries={refetchQueries}
       onCompleted={onCompleted}
@@ -37,9 +36,9 @@ export const Mutation = observer(
         return (
           <Component
             onCompleted={onCompleted}
-            mutationLoading={loading}
+            loading={loading}
             error={error}
-            result={mutationResult}
+            data={mutationResult}
             mutate={mutate}
             {...rest}
           />
@@ -57,10 +56,10 @@ type MutateProps = {
 export const mutate = ({
   mutation: staticMutation,
   update: staticUpdate,
-}: MutateProps): any => Component => ({
+}: MutateProps): Function => Component => ({
   mutation = staticMutation,
   update = staticUpdate,
   ...rest
-}) => (
+}: MutateProps) => (
   <Mutation mutation={mutation} update={update} component={Component} {...rest} />
 )
