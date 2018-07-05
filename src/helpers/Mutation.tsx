@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Mutation as ApolloMutation } from 'react-apollo'
-import get from 'lodash/get'
+import { get } from 'lodash'
 import { observer } from 'mobx-react'
-import { AnyFunction } from '../types/AnyFunction'
+import { AnyFunction } from '../../types/AnyFunction'
 
 type Props = {
   onCompleted?: any

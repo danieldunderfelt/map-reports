@@ -1,10 +1,6 @@
-import * as get from 'lodash/get'
+import { get } from 'lodash'
 
-export function createPaginator(
-  data,
-  name,
-  fetchMore
-) {
+export function createPaginator(data, name, fetchMore) {
   if (!get(data, 'pageInfo.hasNextPage')) {
     return undefined
   }
@@ -13,7 +9,7 @@ export function createPaginator(
     fetchMore({
       variables: {
         perPage,
-        cursor: get(data, `pageInfo.endCursor`)
+        cursor: get(data, `pageInfo.endCursor`),
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const newEdges = get(fetchMoreResult, `${name}.edges`, [])
@@ -26,10 +22,10 @@ export function createPaginator(
               [name]: {
                 __typename: get(previousResult, `${name}.__typename`),
                 edges: [...get(previousResult, `${name}.edges`, []), ...newEdges],
-                pageInfo
-              }
+                pageInfo,
+              },
             }
           : previousResult
-      }
+      },
     })
 }

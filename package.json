@@ -3,7 +3,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html",
     "server": "ts-node server/server.ts",
-    "server:dev": "nodemon --watch 'server/**/*' --exec 'ts-node' server/server.ts"
+    "server:dev": "nodemon --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
   },
   "dependencies": {
     "apollo-boost": "^0.1.10",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/graphql": "^0.13.3",
+    "@types/lodash": "^4.14.110",
     "@types/react": "^16.4.6",
     "@types/react-dom": "^16.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",

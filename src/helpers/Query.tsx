@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { Query as ApolloQuery } from 'react-apollo'
 import { createPaginator } from './paginate'
-import has from 'lodash/has'
-import get from 'lodash/get'
+import { has } from 'lodash'
+import { get } from 'lodash'
 import { observer } from 'mobx-react'
-import { AnyFunction } from '../types/AnyFunction'
+import { AnyFunction } from '../../types/AnyFunction'
 
 export const Query = observer(
   ({

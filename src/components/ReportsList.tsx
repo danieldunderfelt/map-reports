@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import { query } from '../helpers/Query'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
-import { AnyFunction } from '../types/AnyFunction'
+import { AnyFunction } from '../../types/AnyFunction'
 
 const reportsQuery = gql`
   {
@@ -34,11 +34,13 @@ class ReportsList extends React.Component<Props, any> {
   render() {
     const { data } = this.props
 
+    console.log(data)
+
     return data.reports.map(report => (
       <React.Fragment key={report.id}>
         <div>
           <h2>{report.title}</h2>
-          <p>{report.body}</p>
+          <p>{report.message}</p>
           <h4>Reported by: {report.reporter.name}</h4>
         </div>
         <hr />

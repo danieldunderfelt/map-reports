@@ -4,11 +4,11 @@ import { mutate } from '../helpers/Mutation'
 import { observable } from 'mobx'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
-import { AnyFunction } from '../types/AnyFunction'
+import { AnyFunction } from '../../types/AnyFunction'
 
 const createReportMutation = gql`
-  mutation createReport($title: String, $body: String) {
-    createReport(title: $title, body: $body) {
+  mutation createReport($reportData: CreateReport) {
+    createReport(reportData: $reportData) {
       ...ReportFields
     }
   }
@@ -25,7 +25,7 @@ class SubmitReport extends React.Component<Props, any> {
   @observable
   report = {
     title: '',
-    body: '',
+    message: '',
   }
 
   onChange = which => e => {
@@ -36,18 +36,21 @@ class SubmitReport extends React.Component<Props, any> {
     e.preventDefault()
 
     const { mutate } = this.props
-    const { title, body } = this.report
+    const { title, message } = this.report
 
     mutate({
       variables: {
-        title,
-        body,
+        reportData: {
+          title,
+          message,
+          reporter: 'reporter_0'
+        },
       },
     })
   }
 
   render() {
-    const { title, body } = this.report
+    const { title, message } = this.report
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -61,7 +64,7 @@ class SubmitReport extends React.Component<Props, any> {
           <div>
             <label>Body</label>
             <br />
-            <textarea value={body} onChange={this.onChange('body')} />
+            <textarea value={message} onChange={this.onChange('message')} />
           </div>
           <div>
             <button type="submit">Send</button>

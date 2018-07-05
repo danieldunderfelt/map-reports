@@ -1,6 +1,11 @@
+import { CreateReportData } from '../types/CreateReportData'
+import { createReport } from './createReport'
+import { Report } from '../types/Report'
+import { Reporter } from '../types/Reporter'
+
 const { ApolloServer, gql } = require('apollo-server')
 
-const reporters = [
+const reporters: Reporter[] = [
   {
     id: 'reporter_0',
     name: 'anonuser',
@@ -13,33 +18,74 @@ const reporters = [
   },
 ]
 
-const reports = [
-  {
-    id: 'report_0',
-    title: 'Pysäkki huonosti',
-    body: 'Pysäkki H0333 on väärässä paikassa.',
-    reporter: 'reporter_0',
-  },
-  {
-    id: 'report_1',
-    title: 'crossing missing',
-    body: 'Crossing missing at xxx.xxx.',
-    reporter: 'reporter_1',
-  },
+const reports: Report[] = [
+  createReport(
+    {
+      title: 'Pysäkki huonosti',
+      message: 'Pysäkki H0333 on väärässä paikassa.',
+      reporter: 'reporter_0',
+    },
+    0,
+  ),
+  createReport(
+    {
+      title: 'crossing missing',
+      message: 'Crossing missing at xxx.xxx.',
+      reporter: 'reporter_1',
+    },
+    1,
+  ),
 ]
 
 const typeDefs = gql`
+  enum ReportStatus {
+    NEW
+    ACCEPTED
+    WIP
+    DONE
+    REJECTED
+  }
+
+  enum ReportPriority {
+    LOW
+    HIGH
+    CRITICAL
+  }
+
+  type Location {
+    lat: String!
+    lon: String!
+  }
+  
+  input CreateReportLocation {
+    lat: String!
+    lon: String!
+  }
+
   type Report {
-    id: ID
-    title: String
-    body: String
-    reporter: Reporter
+    id: ID!
+    title: String!
+    message: String
+    reporter: Reporter!
+    status: ReportStatus!
+    priority: ReportPriority!
+    location: Location
+    createdAt: Int!
+    updatedAt: Int!
+  }
+  
+  input CreateReport {
+    title: String!
+    message: String
+    reporter: String!
+    location: CreateReportLocation
+    priority: ReportPriority
   }
 
   type Reporter {
-    id: ID
-    name: String
-    type: String
+    id: ID!
+    name: String!
+    type: String!
   }
 
   type Query {
@@ -47,7 +93,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createReport(title: String, body: String): Report
+    createReport(reportData: CreateReport): Report
   }
 `
 
@@ -56,22 +102,17 @@ const resolvers = {
     reports: () => reports,
   },
   Mutation: {
-    createReport: (_, { title, body }) => {
+    createReport: (_, { reportData }: { reportData: CreateReportData }): Report => {
       const index = reports.length
-
-      const report = {
-        id: `report_${index}`,
-        title,
-        body,
-        reporter: 'reporter_0',
-      }
+      const report = createReport(reportData, index)
 
       reports.push(report)
       return report
     },
   },
   Report: {
-    reporter: report => reporters.find(rep => rep.id === report.reporter),
+    reporter: report =>
+      reporters.find(rep => rep.id === report.reporter) || 'NO REPORTER',
   },
 }
 
