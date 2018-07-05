@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Query as ApolloQuery } from 'react-apollo'
 import { createPaginator } from './paginate'
 import has from 'lodash/has'

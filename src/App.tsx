@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
 import Dashboard from './views/Dashboard'
