@@ -6,7 +6,12 @@
     "server:dev": "nodemon --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
   },
   "dependencies": {
-    "apollo-boost": "^0.1.10",
+    "apollo-cache-inmemory": "^1.2.5",
+    "apollo-client": "^2.3.5",
+    "apollo-link": "^1.2.2",
+    "apollo-link-error": "^1.1.0",
+    "apollo-link-http": "^1.5.4",
+    "apollo-link-state": "^0.4.1",
     "apollo-server": "^2.0.0-rc.6",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
@@ -16,9 +21,10 @@
     "mobx-app": "^1.0.3",
     "mobx-react": "^5.2.3",
     "pathricia": "^1.0.1",
-    "react": "^16.4.1",
+    "react": ">= 0.14.0 < 17.0.0-0",
     "react-apollo": "^2.1.9",
     "react-dom": "^16.4.1",
+    "styled-components": "^3.3.3",
     "ts-node": "^7.0.0",
     "typescript": "^2.9.2"
   },

@@ -10,6 +10,7 @@ export const ReportFragment = gql`
     location {
       lat
       lon
+      __typename
     }
     createdAt
     updatedAt
@@ -17,6 +18,8 @@ export const ReportFragment = gql`
       id
       name
       type
+      __typename
     }
+    __typename
   }
 `

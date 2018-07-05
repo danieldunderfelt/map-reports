@@ -5,6 +5,8 @@ import { observable } from 'mobx'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
 import { AnyFunction } from '../../types/AnyFunction'
+import { reportsQuery } from '../queries/reportsQuery'
+import { updateQuery } from '../helpers/updateQuery'
 
 const createReportMutation = gql`
   mutation createReport($reportData: CreateReport) {
@@ -19,7 +21,7 @@ type Props = {
   mutate?: AnyFunction
 }
 
-@mutate({ mutation: createReportMutation })
+@mutate({ mutation: createReportMutation, update: updateQuery(reportsQuery) })
 @observer
 class SubmitReport extends React.Component<Props, any> {
   @observable
