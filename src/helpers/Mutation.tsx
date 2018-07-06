@@ -36,9 +36,9 @@ export const Mutation = observer(
         return (
           <Component
             onCompleted={onCompleted}
-            loading={loading}
-            error={error}
-            data={mutationResult}
+            mutationLoading={loading}
+            mutationError={error}
+            mutationResult={mutationResult}
             mutate={mutate}
             {...rest}
           />

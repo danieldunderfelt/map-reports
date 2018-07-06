@@ -1,6 +1,6 @@
 import { CreateReportData } from '../types/CreateReportData'
 import { createReport } from './createReport'
-import { Report } from '../types/Report'
+import { Report, ReportPriority, ReportStatus } from '../types/Report'
 import { Reporter } from '../types/Reporter'
 
 const { ApolloServer, gql } = require('apollo-server')
@@ -34,6 +34,30 @@ const reports: Report[] = [
       reporter: 'reporter_1',
     },
     1,
+  ),
+  createReport(
+    {
+      title: 'linja menee väärin kartalla',
+      message: 'Bussi ei ajanut kartan mukaan. Onko linja oikein?',
+      reporter: 'reporter_0',
+    },
+    2,
+  ),
+  createReport(
+    {
+      title: 'stop not connected',
+      message: 'Unconnected stop at xxx.xxx.',
+      reporter: 'reporter_1',
+    },
+    3,
+  ),
+  createReport(
+    {
+      title: 'stop not by road',
+      message: 'A stop is not by a road at xxx.xxx.',
+      reporter: 'reporter_1',
+    },
+    4,
   ),
 ]
 
@@ -94,6 +118,8 @@ const typeDefs = gql`
 
   type Mutation {
     createReport(reportData: CreateReport): Report
+    setStatus(reportId: String!, newStatus: ReportStatus): Report
+    setPriority(reportId: String!, newPriority: ReportPriority): Report
   }
 `
 
@@ -107,6 +133,26 @@ const resolvers = {
       const report = createReport(reportData, index)
 
       reports.push(report)
+      return report
+    },
+    setStatus: (_, { reportId, newStatus }: { reportId: string, newStatus: ReportStatus }): Report => {
+      const report = reports.find(r => r.id === reportId)
+
+      if(!report) {
+        throw new Error(`Report with ID ${reportId} not found.`)
+      }
+
+      report.status = newStatus
+      return report
+    },
+    setPriority: (_, { reportId, newPriority }: { reportId: string, newPriority: ReportPriority }): Report => {
+      const report = reports.find(r => r.id === reportId)
+
+      if (!report) {
+        throw new Error(`Report with ID ${reportId} not found.`)
+      }
+
+      report.priority = newPriority
       return report
     },
   },

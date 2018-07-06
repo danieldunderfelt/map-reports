@@ -5,13 +5,18 @@ import { reportsQuery } from '../queries/reportsQuery'
 import { computed, observable, action } from 'mobx'
 import styled from 'styled-components'
 import { orderBy, get } from 'lodash'
-
 import { query } from '../helpers/Query'
-import { ReportPriority, ReportStatus } from '../../types/Report'
+import {
+  ReportPriority as ReportPriorityEnum,
+  ReportStatus as ReportStatusEnum,
+} from '../../types/Report'
+import ReportStatus from './ReportStatus'
+import ReportPriority from './ReportPriority'
+
 type Props = {
   startPolling?: AnyFunction
   stopPolling?: AnyFunction
-  data?: any
+  queryData?: any
 }
 
 const SortItem = styled.span<{ active: Boolean }>`
@@ -48,12 +53,13 @@ const sortableKeys = [
   'createdAt',
   'updatedAt',
 ]
+
 const filterableKeys = ['title', 'reporter', 'status', 'priority']
 
 const sortValues = {
-  reporter: obj => obj.reporter.type === 'manual' ? 1 : 0,
-  status: obj => Object.values(ReportStatus).indexOf(obj.status),
-  priority: obj => Object.values(ReportPriority).indexOf(obj.status),
+  reporter: obj => (obj.reporter.type === 'manual' ? 1 : 0),
+  status: obj => Object.values(ReportStatusEnum).indexOf(obj.status),
+  priority: obj => Object.values(ReportPriorityEnum).indexOf(obj.priority),
 }
 
 @query({ query: reportsQuery })
@@ -67,13 +73,17 @@ class ReportsList extends React.Component<Props, any> {
 
   @computed
   get reports() {
-    const reports = get(this, 'props.data.reports', [])
+    const reports = get(this, 'props.queryData.reports', [])
     const { sortBy } = this.listSettings
 
-    return orderBy(reports, value => {
-      const getSortValue = get(sortValues, sortBy.key, obj => obj[sortBy.key])
-      return getSortValue(value)
-    }, sortBy.direction)
+    return orderBy(
+      reports,
+      value => {
+        const getSortValue = get(sortValues, sortBy.key, obj => obj[sortBy.key])
+        return getSortValue(value)
+      },
+      sortBy.direction,
+    )
   }
 
   onSort = (key, direction) =>
@@ -120,10 +130,9 @@ class ReportsList extends React.Component<Props, any> {
               <p>{report.message}</p>
               <h4>Reported by: {report.reporter.name}</h4>
               <p>
-                Status: { report.status }
-              </p>
-              <p>
-                Priority: {report.priority}
+                <ReportStatus report={report} readOnly={false} />
+                <br />
+                <ReportPriority report={report} readOnly={false} />
               </p>
             </div>
             <hr />

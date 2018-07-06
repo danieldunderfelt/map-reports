@@ -52,9 +52,9 @@ export const Query = observer(
             stopPolling={stopPolling}
             apolloClient={client}
             refetch={refetch}
-            error={error}
+            queryError={error}
             fetchMore={paginate ? paginator : false}
-            data={{ ...get(rest, 'data', {}), ...data }} // Merges another data prop with this data
+            queryData={{ ...get(rest, 'queryData', {}), ...data }} // Merges another data prop with this data
           />
         )
       }}
