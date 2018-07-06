@@ -10,8 +10,8 @@ import {
   ReportPriority as ReportPriorityEnum,
   ReportStatus as ReportStatusEnum,
 } from '../../types/Report'
-import ReportStatus from './ReportStatus'
-import ReportPriority from './ReportPriority'
+import ReportStatus from '../components/ReportStatus'
+import ReportPriority from '../components/ReportPriority'
 
 type Props = {
   startPolling?: AnyFunction

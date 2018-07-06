@@ -1,26 +1,32 @@
 import * as React from 'react'
 import { ApolloProvider } from 'react-apollo'
-import Dashboard from './views/Dashboard'
 import { Provider } from 'mobx-react'
 import { Router } from 'pathricia'
 import createHistory from 'history/createBrowserHistory'
-import Route from './helpers/Route'
-import Nav from './components/Nav'
-import CreateReport from './views/createReport'
 import client from './helpers/graphqlClient'
+import App from './views/App'
+import 'normalize.css'
+import { injectGlobal } from 'styled-components'
+import { typography } from './style/typography'
+
+injectGlobal`
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  ${typography}
+`
 
 const router = Router('/', createHistory())
 
-const App = () => (
+const AppContainer = () => (
   <ApolloProvider client={client}>
     <Provider router={router}>
-      <>
-        <Nav />
-        <Route path="/" component={Dashboard} />
-        <Route path="/create-report" component={CreateReport} />
-      </>
+      <App />
     </Provider>
   </ApolloProvider>
 )
 
-export default App
+export default AppContainer

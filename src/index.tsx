@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 import { configure } from 'mobx'
-import App from './App'
+import AppContainer from './AppContainer'
 
 configure({
   computedRequiresReaction: true,
@@ -10,4 +10,4 @@ configure({
 
 const mountNode = document.getElementById('app')
 
-render(<App />, mountNode)
+render(<AppContainer />, mountNode)
