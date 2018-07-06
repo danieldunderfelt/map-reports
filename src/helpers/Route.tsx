@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Router } from 'pathricia'
 import { inject, observer} from 'mobx-react'
 import { AnyFunction } from '../../types/AnyFunction'
-import { observable } from 'mobx'
+import { observable, action} from 'mobx'
 
 type Props = {
   component: any
@@ -17,7 +17,11 @@ type Props = {
 @observer
 class Route extends React.Component<Props, any> {
   unlisten = null
-  @observable renderRoute = this.routeShouldRender()
+  @observable renderRoute = false
+
+  componentWillMount() {
+    this.onRouteChange()
+  }
 
   componentDidMount() {
     const { router } = this.props
@@ -33,7 +37,7 @@ class Route extends React.Component<Props, any> {
     return router.isActive(path)
   }
 
-  onRouteChange = () => {
+  @action onRouteChange = () => {
     this.renderRoute = this.routeShouldRender()
   }
 

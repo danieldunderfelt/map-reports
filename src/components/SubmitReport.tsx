@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { observer } from 'mobx-react'
 import { mutate } from '../helpers/Mutation'
-import { observable } from 'mobx'
+import { action, observable } from 'mobx'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
 import { AnyFunction } from '../../types/AnyFunction'
@@ -30,9 +30,9 @@ class SubmitReport extends React.Component<Props, any> {
     message: '',
   }
 
-  onChange = which => e => {
+  onChange = which => action((e: React.ChangeEvent<any>) => {
     this.report[which] = e.target.value
-  }
+  })
 
   onSubmit = e => {
     e.preventDefault()

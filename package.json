@@ -20,6 +20,7 @@
     "mobx": "^5.0.3",
     "mobx-app": "^1.0.3",
     "mobx-react": "^5.2.3",
+    "mobx-utils": "^5.0.0",
     "pathricia": "^1.0.1",
     "react": ">= 0.14.0 < 17.0.0-0",
     "react-apollo": "^2.1.9",
