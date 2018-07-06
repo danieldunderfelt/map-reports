@@ -3,9 +3,10 @@ import { Router } from 'pathricia'
 import { inject, observer} from 'mobx-react'
 import { AnyFunction } from '../../types/AnyFunction'
 import { observable, action} from 'mobx'
+import { omit } from 'lodash'
 
-type Props = {
-  component: any
+interface Props<P> {
+  component: React.ComponentType<P & any>
   path: string
   router?: {
     listen: AnyFunction
@@ -15,7 +16,7 @@ type Props = {
 
 @inject('router')
 @observer
-class Route extends React.Component<Props, any> {
+class Route<ComponentProps> extends React.Component<ComponentProps & Props<ComponentProps>, any> {
   unlisten = null
   @observable renderRoute = false
 
@@ -42,8 +43,10 @@ class Route extends React.Component<Props, any> {
   }
 
   render() {
-    const { component: Component, ...rest } = this.props
-    return this.renderRoute ? <Component {...rest} /> : null
+    const { component } = this.props
+    const componentProps = omit(this.props, 'component')
+
+    return this.renderRoute ? React.createElement(component, componentProps) : null
   }
 }
 

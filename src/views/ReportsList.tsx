@@ -1,25 +1,23 @@
 import * as React from 'react'
 import { observer } from 'mobx-react'
 import { AnyFunction } from '../../types/AnyFunction'
-import { reportsQuery } from '../queries/reportsQuery'
 import { computed, observable, action } from 'mobx'
 import styled from 'styled-components'
 import { orderBy, get } from 'lodash'
-import { query } from '../helpers/Query'
 import {
   ReportPriority as ReportPriorityEnum,
   ReportStatus as ReportStatusEnum,
 } from '../../types/Report'
 import ReportStatus from '../components/ReportStatus'
 import ReportPriority from '../components/ReportPriority'
+import { RendersReports } from '../../types/RendersReports'
 
-type Props = {
+interface Props extends RendersReports {
   startPolling?: AnyFunction
   stopPolling?: AnyFunction
-  queryData?: any
 }
 
-const SortItem = styled.span<{ active: Boolean }>`
+const SortItem = styled.span<{ active: boolean }>`
   margin-right: 1rem;
   padding: 0.5rem;
   border: 1px solid ${({ active = false }) => (active ? '#ccc' : '#efefef')};
@@ -62,7 +60,6 @@ const sortValues = {
   priority: obj => Object.values(ReportPriorityEnum).indexOf(obj.priority),
 }
 
-@query({ query: reportsQuery })
 @observer
 class ReportsList extends React.Component<Props, any> {
   @observable
@@ -73,7 +70,7 @@ class ReportsList extends React.Component<Props, any> {
 
   @computed
   get reports() {
-    const reports = get(this, 'props.queryData.reports', [])
+    const reports = get(this, 'props.reports', [])
     const { sortBy } = this.listSettings
 
     return orderBy(

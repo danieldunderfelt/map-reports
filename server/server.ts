@@ -24,6 +24,7 @@ const reports: Report[] = [
       title: 'Pysäkki huonosti',
       message: 'Pysäkki H0333 on väärässä paikassa.',
       reporter: 'reporter_0',
+      location: { lat: 60.37800782, lon: 25.50326369 }
     },
     0,
   ),
@@ -32,6 +33,7 @@ const reports: Report[] = [
       title: 'crossing missing',
       message: 'Crossing missing at xxx.xxx.',
       reporter: 'reporter_1',
+      location: { lat: 60.20120603, lon: 24.4854535 }
     },
     1,
   ),
@@ -40,6 +42,7 @@ const reports: Report[] = [
       title: 'linja menee väärin kartalla',
       message: 'Bussi ei ajanut kartan mukaan. Onko linja oikein?',
       reporter: 'reporter_0',
+      location: { lat: 60.45598402, lon: 24.87845439 }
     },
     2,
   ),
@@ -48,6 +51,7 @@ const reports: Report[] = [
       title: 'stop not connected',
       message: 'Unconnected stop at xxx.xxx.',
       reporter: 'reporter_1',
+      location: { lat: 60.28535725, lon: 24.2386912 }
     },
     3,
   ),
@@ -56,6 +60,7 @@ const reports: Report[] = [
       title: 'stop not by road',
       message: 'A stop is not by a road at xxx.xxx.',
       reporter: 'reporter_1',
+      location: { lat: 60.22168666, lon: 24.85352933 }
     },
     4,
   ),
@@ -77,8 +82,8 @@ const typeDefs = gql`
   }
 
   type Location {
-    lat: String!
-    lon: String!
+    lat: Float!
+    lon: Float!
   }
   
   input CreateReportLocation {
