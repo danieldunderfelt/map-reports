@@ -9,7 +9,10 @@ import { reportsQuery } from '../queries/reportsQuery'
 import { get } from 'lodash'
 import { Report } from '../../types/Report'
 import { RendersReports } from '../../types/RendersReports'
-import ReportsMap from './ReportsMap'
+import ReportsMap, { MapModes } from './ReportsMap'
+import { inject, observer } from 'mobx-react'
+import { RouterType } from 'pathricia'
+import routes from '../routes'
 
 const Root = styled.div`
   height: 100vh;
@@ -29,23 +32,33 @@ const MapArea = styled.div`
 
 type Props = {
   queryData?: Report[]
+  state?: any
 }
 
 @query({ query: reportsQuery })
+@inject('state')
+@observer
 class App extends React.Component<Props, any> {
-
   render() {
-    const reports = get(this, 'props.queryData.reports', [])
+    const { queryData, state } = this.props
+    const reports = get(queryData, 'reports', [])
+
+    const mapMode =
+      state.route === routes.CREATE_REPORT ? MapModes.pick : MapModes.display
 
     return (
       <Root>
         <Sidebar>
           <Nav />
-          <Route<RendersReports> path="/" reports={reports} component={ReportsList} />
-          <Route path="/create-report" component={SubmitReport} />
+          <Route<RendersReports>
+            path={routes.REPORTS}
+            reports={reports}
+            component={ReportsList}
+          />
+          <Route path={routes.CREATE_REPORT} component={SubmitReport} />
         </Sidebar>
         <MapArea>
-          <ReportsMap reports={reports} />
+          <ReportsMap mapMode={mapMode} reports={reports} />
         </MapArea>
       </Root>
     )

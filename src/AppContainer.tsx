@@ -8,6 +8,8 @@ import App from './views/App'
 import 'normalize.css'
 import { injectGlobal } from 'styled-components'
 import { typography } from './style/typography'
+import { createStore } from 'mobx-app'
+import UIStore from './stores/UIStore'
 
 injectGlobal`
   body {
@@ -21,9 +23,15 @@ injectGlobal`
 
 const router = Router('/', createHistory())
 
+const { state, actions } = createStore({
+  UI: UIStore
+}, {
+  router
+})
+
 const AppContainer = () => (
   <ApolloProvider client={client}>
-    <Provider router={router}>
+    <Provider state={state} actions={actions} router={router}>
       <App />
     </Provider>
   </ApolloProvider>

@@ -27,17 +27,31 @@ const MapContainer = styled.div`
   }
 `
 
-export default ({ reports = [] }: RendersReports) => {
+export const enum MapModes {
+  pick = 'pick',
+  display = 'display'
+}
+
+interface Props extends RendersReports {
+  mapMode: MapModes
+}
+
+export default ({ reports = [], mapMode }: Props) => {
+  console.log(mapMode)
+
+  const markers = mapMode === MapModes.display ? reports
+    .filter(report => !!report.location && !!report.location.lat)
+    .map(({ location, message, id }) => ({
+      id,
+      position: L.latLng(location.lat, location.lon),
+      message,
+    })) : []
+
   return (
     <MapContainer>
+      { }
       <Map
-        markers={reports
-          .filter(report => !!report.location && !!report.location.lat)
-          .map(({ location, message, id }) => ({
-            id,
-            position: L.latLng(location.lat, location.lon),
-            message,
-          }))}
+        markers={markers}
       />
     </MapContainer>
   )

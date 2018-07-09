@@ -3,7 +3,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html",
     "server": "ts-node server/server.ts",
-    "server:dev": "nodemon --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
+    "server:dev": "nodemon --signal SIGTERM --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
   },
   "dependencies": {
     "@types/leaflet": "^1.2.7",

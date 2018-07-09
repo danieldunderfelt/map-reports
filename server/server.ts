@@ -3,7 +3,6 @@ import { createReport } from './createReport'
 import { Report, ReportPriority, ReportStatus } from '../types/Report'
 import { Reporter } from '../types/Reporter'
 import getRandomPosition from './getRandomPosition'
-import faker from 'faker'
 
 const { ApolloServer, gql } = require('apollo-server')
 
@@ -42,8 +41,6 @@ for (let i = 0; i < 10; i++) {
 
   reports.push(rep)
 }
-
-console.log(reports)
 
 const typeDefs = gql`
   enum ReportStatus {
