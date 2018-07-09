@@ -31,20 +31,25 @@ const ReportStore = state => {
     reportState.filterReports.push(filterTerm)
   })
 
-  const setFilterValues = action((filterIndex: number, key?: string, value: string = '') => {
-    const filter = reportState.filterReports[filterIndex]
+  const setFilterValues = action(
+    (filterIndex: number, key?: string, value: string = '') => {
+      const filter = reportState.filterReports[filterIndex]
 
-    if(filter) {
-      filter.key = key ? key : filter.key
-      filter.value = value
-    }
-  })
+      if (filter) {
+        filter.key = key ? key : filter.key
+        filter.value = value
+      }
+    },
+  )
+
+  const removeFilter = action((index: number) => reportState.filterReports.splice(index, 1))
 
   return {
     createReport,
     sortReports,
     addReportsFilter,
-    setFilterValues
+    setFilterValues,
+    removeFilter,
   }
 }
 

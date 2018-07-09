@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { app } from 'mobx-app'
 import { uniq, get } from 'lodash'
 import { Report } from '../../types/Report'
+import Select from '../helpers/Select'
 
 const SortButton = styled.button<{ active: boolean }>`
   background: 0;
@@ -21,6 +22,9 @@ const FilterItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1rem;
+  margin: 0.5rem;
+  border: 1px solid #eee;
 `
 
 const sortableKeys = [
@@ -41,6 +45,11 @@ const filterableKeys = {
   priority: 'values',
 }
 
+type FilterType = {
+  key: string
+  value: string
+}
+
 interface Props {
   reports: Report[]
   state?: {
@@ -48,15 +57,13 @@ interface Props {
       key: string
       direction: string
     }
-    filterReports: {
-      key: string
-      value: string
-    }[]
+    filterReports: FilterType[]
   }
   Report?: {
     sortReports: (key: string, direction: string) => void
     addReportsFilter: (key?: string, value?: string) => void
     setFilterValues: (filterIndex: number, key?: string, value?: string) => void
+    removeFilter: (filterIndex: number) => FilterType
   }
 }
 
@@ -112,19 +119,13 @@ class SortAndFilter extends React.Component<Props, any> {
 
     return (
       <FilterItem key={`report_filter_${filterItem.key}_${index}`}>
-        <select
+        <Select
+          name={`filter_key_${filterItem.key}_select`}
+          onChange={e => Report.setFilterValues(index, e.target.value)}
+          options={[{ value: '', label: 'Choose prop' }, ...keyOptions]}
           value={filterItem.key}
-          onChange={e => Report.setFilterValues(index, e.target.value)}>
-          <option value="">
-            Choose filter...
-          </option>
-          {keyOptions.map(key => (
-            <option value={key} key={`filter_key_option_${key}`}>
-              {key}
-            </option>
-          ))}
-        </select>
-        { filterType === 'search' ? (
+        />
+        {filterType === 'search' ? (
           <input
             type="text"
             value={filterItem.value}
@@ -133,16 +134,18 @@ class SortAndFilter extends React.Component<Props, any> {
             }
           />
         ) : (
-          <select
+          <Select
+            name={`filter_options_${filterItem.key}_select`}
+            options={this.getFilterOptions(filterItem.key)}
             value={filterItem.value}
-            onChange={e => Report.setFilterValues(index, filterItem.key, e.target.value)}>
-            {this.getFilterOptions(filterItem.key).map(value => (
-              <option value={value} key={`filter_value_option_${value}`}>
-                {value}
-              </option>
-            ))}
-          </select>
+            onChange={e =>
+              Report.setFilterValues(index, filterItem.key, e.target.value)
+            }
+          />
         )}
+        <button onClick={() => Report.removeFilter(index)}>
+          -
+        </button>
       </FilterItem>
     )
   }
@@ -154,13 +157,12 @@ class SortAndFilter extends React.Component<Props, any> {
     return (
       <div>
         <div>
-          <select onChange={this.onChangeSortKey} value={sortReports.key}>
-            {sortableKeys.map((key, idx) => (
-              <option key={`sort_${key}_${idx}`} value={key}>
-                {key}
-              </option>
-            ))}
-          </select>
+          <Select
+            name="sort_reports"
+            options={sortableKeys}
+            onChange={this.onChangeSortKey}
+            value={sortReports.key}
+          />
           <SortButton
             active={sortReports.direction === 'asc'}
             type="button"
