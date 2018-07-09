@@ -2,7 +2,7 @@ import { CreateReportData } from '../types/CreateReportData'
 import { createReport } from './createReport'
 import { Report, ReportPriority, ReportStatus } from '../types/Report'
 import { Reporter } from '../types/Reporter'
-import { generateRandomPoint } from 'generate-random-points'
+import getRandomPosition from './getRandomPosition'
 import faker from 'faker'
 
 const { ApolloServer, gql } = require('apollo-server')
@@ -28,7 +28,7 @@ const reporters: Reporter[] = [
 const reports: Report[] = []
 
 for (let i = 0; i < 10; i++) {
-  const loc = generateRandomPoint(helsinkiLocation, 5000)
+  const loc = getRandomPosition(helsinkiLocation.latitude, helsinkiLocation.longitude, 5000)
 
   const rep = createReport(
     {
