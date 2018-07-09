@@ -2,8 +2,15 @@ import { CreateReportData } from '../types/CreateReportData'
 import { createReport } from './createReport'
 import { Report, ReportPriority, ReportStatus } from '../types/Report'
 import { Reporter } from '../types/Reporter'
+import { generateRandomPoint } from 'generate-random-points'
+import faker from 'faker'
 
 const { ApolloServer, gql } = require('apollo-server')
+
+const helsinkiLocation = {
+  latitude: 60.192059,
+  longitude: 24.945831
+}
 
 const reporters: Reporter[] = [
   {
@@ -18,53 +25,25 @@ const reporters: Reporter[] = [
   },
 ]
 
-const reports: Report[] = [
-  createReport(
+const reports: Report[] = []
+
+for (let i = 0; i < 10; i++) {
+  const loc = generateRandomPoint(helsinkiLocation, 5000)
+
+  const rep = createReport(
     {
       title: 'Pysäkki huonosti',
       message: 'Pysäkki H0333 on väärässä paikassa.',
-      reporter: 'reporter_0',
-      location: { lat: 60.37800782, lon: 25.50326369 }
+      reporter: reporters[Math.round(Math.random())].id,
+      location: { lat: loc.latitude, lon: loc.longitude },
     },
-    0,
-  ),
-  createReport(
-    {
-      title: 'crossing missing',
-      message: 'Crossing missing at xxx.xxx.',
-      reporter: 'reporter_1',
-      location: { lat: 60.20120603, lon: 24.4854535 }
-    },
-    1,
-  ),
-  createReport(
-    {
-      title: 'linja menee väärin kartalla',
-      message: 'Bussi ei ajanut kartan mukaan. Onko linja oikein?',
-      reporter: 'reporter_0',
-      location: { lat: 60.45598402, lon: 24.87845439 }
-    },
-    2,
-  ),
-  createReport(
-    {
-      title: 'stop not connected',
-      message: 'Unconnected stop at xxx.xxx.',
-      reporter: 'reporter_1',
-      location: { lat: 60.28535725, lon: 24.2386912 }
-    },
-    3,
-  ),
-  createReport(
-    {
-      title: 'stop not by road',
-      message: 'A stop is not by a road at xxx.xxx.',
-      reporter: 'reporter_1',
-      location: { lat: 60.22168666, lon: 24.85352933 }
-    },
-    4,
-  ),
-]
+    i,
+  )
+
+  reports.push(rep)
+}
+
+console.log(reports)
 
 const typeDefs = gql`
   enum ReportStatus {
@@ -85,7 +64,7 @@ const typeDefs = gql`
     lat: Float!
     lon: Float!
   }
-  
+
   input CreateReportLocation {
     lat: String!
     lon: String!
@@ -102,7 +81,7 @@ const typeDefs = gql`
     createdAt: Int!
     updatedAt: Int!
   }
-  
+
   input CreateReport {
     title: String!
     message: String
@@ -140,17 +119,23 @@ const resolvers = {
       reports.push(report)
       return report
     },
-    setStatus: (_, { reportId, newStatus }: { reportId: string, newStatus: ReportStatus }): Report => {
+    setStatus: (
+      _,
+      { reportId, newStatus }: { reportId: string; newStatus: ReportStatus },
+    ): Report => {
       const report = reports.find(r => r.id === reportId)
 
-      if(!report) {
+      if (!report) {
         throw new Error(`Report with ID ${reportId} not found.`)
       }
 
       report.status = newStatus
       return report
     },
-    setPriority: (_, { reportId, newPriority }: { reportId: string, newPriority: ReportPriority }): Report => {
+    setPriority: (
+      _,
+      { reportId, newPriority }: { reportId: string; newPriority: ReportPriority },
+    ): Report => {
       const report = reports.find(r => r.id === reportId)
 
       if (!report) {
