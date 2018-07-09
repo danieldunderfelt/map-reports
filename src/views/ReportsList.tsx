@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react'
 import { computed } from 'mobx'
-import { orderBy, get } from 'lodash'
+import { orderBy, get, toLower, groupBy, values } from 'lodash'
 import ReportStatus from '../components/ReportStatus'
 import ReportPriority from '../components/ReportPriority'
 import { RendersReports } from '../../types/RendersReports'
@@ -11,6 +11,7 @@ import {
   ReportStatus as ReportStatusEnum,
 } from '../../types/Report'
 import SortAndFilter from '../components/SortAndFilter'
+import fuzzysearch from 'fuzzysearch'
 
 interface Props extends RendersReports {
   state?: {
@@ -40,14 +41,28 @@ class ReportsList extends React.Component<Props, any> {
     const { state, reports = [] } = this.props
     const { sortReports, filterReports } = state
 
-    return orderBy<Report>(
-      reports.filter(report =>
-        filterReports
-          .filter(filter => !!filter.key)
-          .every(filter =>
-            new RegExp(filter.value, 'g').test(get(report, filter.key, '')),
-          ),
+    // Group filters by the key they use
+    const filterGroups = values(
+      groupBy(filterReports.filter(filter => !!filter.key), 'key'),
+    )
+
+    // Include only reports that match all filters
+    const filteredReports = reports.filter(report =>
+      // make sure that the current report matches every filter group
+      filterGroups.every(filterGroup =>
+        // Filters are grouped by key. If there are many keys, treat it as an
+        // "or" filter such that the report[key] value matches either filter.
+        // A single filter in a group is effectively an "and" filter.
+        filterGroup.some(filter =>
+          // Use fuzzy search to match the filter value and the report[key] value.
+          fuzzysearch(toLower(filter.value), toLower(get(report, filter.key, ''))),
+        ),
       ),
+    )
+
+    // Order the filtered reports
+    return orderBy<Report>(
+      filteredReports,
       value => {
         const getSortValue = get(
           sortValues,

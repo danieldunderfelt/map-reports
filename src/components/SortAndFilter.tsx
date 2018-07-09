@@ -104,13 +104,9 @@ class SortAndFilter extends React.Component<Props, any> {
     return uniq(options)
   }
 
-  getFilterKeys = () => {
-    const { state } = this.props
-
-    return Object.keys(filterableKeys).filter(
-      key => state.filterReports.find(filter => filter.key === key) !== null,
-    )
-  }
+  getFilterKeys = () => Object
+    .keys(filterableKeys)
+    .filter(key => this.getFilterOptions(key).length > 1)
 
   renderFilterItem = (filterItem: { key: string; value: string }, index) => {
     const { Report } = this.props
