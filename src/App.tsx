@@ -1,23 +1,22 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import ReportsList from './ReportsList'
-import SubmitReport from './SubmitReport'
-import Nav from '../components/Nav'
-import Route from '../helpers/Route'
-import { query } from '../helpers/Query'
-import { reportsQuery } from '../queries/reportsQuery'
+import ReportsList from './views/ReportsList'
+import SubmitReport from './views/SubmitReport'
+import Nav from './components/Nav'
+import Route from './helpers/Route'
+import { query } from './helpers/Query'
+import { reportsQuery } from './queries/reportsQuery'
 import { get } from 'lodash'
-import { Report } from '../../types/Report'
-import { RendersReports } from '../../types/RendersReports'
-import ReportsMap, { MapModes } from './ReportsMap'
-import { inject, observer } from 'mobx-react'
-import { RouterType } from 'pathricia'
-import routes from '../routes'
+import { Report } from '../types/Report'
+import { RendersReports } from '../types/RendersReports'
+import ReportsMap  from './views/ReportsMap'
+import { observer } from 'mobx-react'
+import routes from './routes'
 
 const Root = styled.div`
   height: 100vh;
   display: grid;
-  grid-template-columns: 25% 1fr;
+  grid-template-columns: 25rem 1fr;
 `
 
 const Sidebar = styled.div`
@@ -36,15 +35,11 @@ type Props = {
 }
 
 @query({ query: reportsQuery })
-@inject('state')
 @observer
 class App extends React.Component<Props, any> {
   render() {
-    const { queryData, state } = this.props
+    const { queryData } = this.props
     const reports = get(queryData, 'reports', [])
-
-    const mapMode =
-      state.route === routes.CREATE_REPORT ? MapModes.pick : MapModes.display
 
     return (
       <Root>
@@ -58,7 +53,7 @@ class App extends React.Component<Props, any> {
           <Route path={routes.CREATE_REPORT} component={SubmitReport} />
         </Sidebar>
         <MapArea>
-          <ReportsMap mapMode={mapMode} reports={reports} />
+          <ReportsMap reports={reports} />
         </MapArea>
       </Root>
     )

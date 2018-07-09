@@ -5,7 +5,7 @@ declare module "*.png" {
 
 declare module 'pathricia' {
   export type RouterType = {
-    go: () => string
+    go: (toRoute: string, replace?: boolean) => string
     get: () => string
     back: () => void
     forward: () => void
