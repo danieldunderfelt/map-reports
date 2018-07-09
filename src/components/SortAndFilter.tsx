@@ -12,7 +12,7 @@ const SortButton = styled.button<{ active: boolean }>`
   padding: 0;
   color: blue;
   cursor: pointer;
-  width: 1.75rem;
+  width: 4.5rem;
   text-align: center;
   outline: 0;
   font-weight: ${({ active = false }) => (active ? 'bold' : 'normal')};
@@ -43,6 +43,19 @@ const filterableKeys = {
   'reporter.type': 'values',
   status: 'values',
   priority: 'values',
+}
+
+const filterLabels = {
+  title: 'Otsikko',
+  message: 'Viesti',
+  'reporter.id': 'Ilmoittaja',
+  'reporter.type': 'Ilmoittajan tyyppi',
+  status: 'Vaihe',
+  priority: 'Tärkeys',
+  createdAt: 'Luontipäivämäärä',
+  updatedAt: 'Viimeksi päivitetty',
+  asc: 'Nouseva',
+  desc: 'Laskeva',
 }
 
 type FilterType = {
@@ -104,9 +117,13 @@ class SortAndFilter extends React.Component<Props, any> {
     return uniq(options)
   }
 
-  getFilterKeys = () => Object
-    .keys(filterableKeys)
-    .filter(key => this.getFilterOptions(key).length > 1)
+  getFilterKeys = () =>
+    Object.keys(filterableKeys)
+      .filter(key => this.getFilterOptions(key).length > 1)
+      .map(filterKey => ({
+        value: filterKey,
+        label: get(filterLabels, filterKey, filterKey),
+      }))
 
   renderFilterItem = (filterItem: { key: string; value: string }, index) => {
     const { Report } = this.props
@@ -118,7 +135,7 @@ class SortAndFilter extends React.Component<Props, any> {
         <Select
           name={`filter_key_${filterItem.key}_select`}
           onChange={e => Report.setFilterValues(index, e.target.value)}
-          options={[{ value: '', label: 'Choose prop' }, ...keyOptions]}
+          options={[{ value: '', label: 'Valitse suodatin' }, ...keyOptions]}
           value={filterItem.key}
         />
         {filterType === 'search' ? (
@@ -139,9 +156,7 @@ class SortAndFilter extends React.Component<Props, any> {
             }
           />
         )}
-        <button onClick={() => Report.removeFilter(index)}>
-          -
-        </button>
+        <button onClick={() => Report.removeFilter(index)}>-</button>
       </FilterItem>
     )
   }
@@ -155,7 +170,10 @@ class SortAndFilter extends React.Component<Props, any> {
         <div>
           <Select
             name="sort_reports"
-            options={sortableKeys}
+            options={sortableKeys.map(sortKey => ({
+              value: sortKey,
+              label: get(filterLabels, sortKey, sortKey),
+            }))}
             onChange={this.onChangeSortKey}
             value={sortReports.key}
           />
@@ -163,14 +181,14 @@ class SortAndFilter extends React.Component<Props, any> {
             active={sortReports.direction === 'asc'}
             type="button"
             onClick={this.onChangeSortDirection('asc')}>
-            asc
+            {get(filterLabels, 'asc', 'asc')}
           </SortButton>{' '}
           /{' '}
           <SortButton
             active={sortReports.direction === 'desc'}
             type="button"
             onClick={this.onChangeSortDirection('desc')}>
-            desc
+            {get(filterLabels, 'desc', 'desc')}
           </SortButton>
         </div>
         <div>
