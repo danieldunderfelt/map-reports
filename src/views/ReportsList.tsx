@@ -21,7 +21,7 @@ interface Props extends RendersReports {
     filterReports: {
       key: string
       value: string
-    }
+    }[]
   }
   reports: Report[]
 }
@@ -38,10 +38,16 @@ class ReportsList extends React.Component<Props, any> {
   @computed
   get reports(): Report[] {
     const { state, reports = [] } = this.props
-    const { sortReports } = state
+    const { sortReports, filterReports } = state
 
     return orderBy<Report>(
-      reports,
+      reports.filter(report =>
+        filterReports
+          .filter(filter => !!filter.key)
+          .every(filter =>
+            new RegExp(filter.value, 'g').test(get(report, filter.key, '')),
+          ),
+      ),
       value => {
         const getSortValue = get(
           sortValues,
@@ -59,13 +65,18 @@ class ReportsList extends React.Component<Props, any> {
 
     return (
       <div>
-        <SortAndFilter />
+        <SortAndFilter reports={this.props.reports} />
         {reports.map(report => (
           <React.Fragment key={report.id}>
             <div>
               <h2>{report.title}</h2>
               <p>{report.message}</p>
-              <h4>Reported by: {report.reporter.name}</h4>
+              <h4>
+                Reported by:{' '}
+                {typeof report.reporter === 'string'
+                  ? report.reporter
+                  : report.reporter.name}
+              </h4>
               <p>
                 <ReportStatus report={report} readOnly={false} />
                 <br />

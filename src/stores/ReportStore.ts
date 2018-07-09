@@ -9,7 +9,7 @@ const ReportStore = state => {
   const reportState = extendObservable(state, {
     reportDraft: emptyReport,
     sortReports: { key: 'createdAt', direction: 'desc' },
-    filterReports: { key: '', value: '' },
+    filterReports: [{ key: '', value: '' }],
   })
 
   const createReport = action(() => {
@@ -26,15 +26,25 @@ const ReportStore = state => {
     },
   )
 
-  const filterReports = action((key, value) => {
-    reportState.filterReports.key = key
-    reportState.filterReports.value = value
+  const addReportsFilter = action((key = '', value = '') => {
+    const filterTerm = { key, value }
+    reportState.filterReports.push(filterTerm)
+  })
+
+  const setFilterValues = action((filterIndex: number, key?: string, value: string = '') => {
+    const filter = reportState.filterReports[filterIndex]
+
+    if(filter) {
+      filter.key = key ? key : filter.key
+      filter.value = value
+    }
   })
 
   return {
     createReport,
     sortReports,
-    filterReports,
+    addReportsFilter,
+    setFilterValues
   }
 }
 
