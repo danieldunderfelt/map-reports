@@ -5,6 +5,7 @@ import { app } from 'mobx-app'
 import { uniq, get } from 'lodash'
 import { Report } from '../../types/Report'
 import Select from '../helpers/Select'
+import { ReportActions } from '../../types/ReportActions'
 
 const SortButton = styled.button<{ active: boolean }>`
   background: 0;
@@ -72,12 +73,7 @@ interface Props {
     }
     filterReports: FilterType[]
   }
-  Report?: {
-    sortReports: (key: string, direction: string) => void
-    addReportsFilter: (key?: string, value?: string) => void
-    setFilterValues: (filterIndex: number, key?: string, value?: string) => void
-    removeFilter: (filterIndex: number) => FilterType
-  }
+  Report?: ReportActions
 }
 
 @inject(app('Report'))

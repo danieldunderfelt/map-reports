@@ -1,12 +1,14 @@
 import { action, extendObservable } from 'mobx'
+import { ReportActions } from '../../types/ReportActions'
 
 const emptyReport = {
   title: '',
   message: '',
 }
 
-const ReportStore = state => {
+const ReportStore = (state): ReportActions => {
   const reportState = extendObservable(state, {
+    focusedReport: null,
     reportDraft: emptyReport,
     sortReports: { key: 'createdAt', direction: 'desc' },
     filterReports: [{ key: '', value: '' }],
@@ -42,7 +44,19 @@ const ReportStore = state => {
     },
   )
 
-  const removeFilter = action((index: number) => reportState.filterReports.splice(index, 1))
+  const removeFilter = action((index: number) => {
+    reportState.filterReports.splice(index, 1)
+  })
+
+  const focusReport = action((reportId?: string) => {
+    let setVal = reportId
+
+    if (reportState.focusedReport === reportId) {
+      setVal = null
+    }
+
+    reportState.focusedReport = setVal
+  })
 
   return {
     createReport,
@@ -50,6 +64,7 @@ const ReportStore = state => {
     addReportsFilter,
     setFilterValues,
     removeFilter,
+    focusReport,
   }
 }
 

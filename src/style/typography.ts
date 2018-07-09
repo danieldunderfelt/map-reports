@@ -5,4 +5,8 @@ export const typography = css`
     font-size: 16px;
     font-family: sans-serif;
   }
+  
+  p {
+    line-height: 1.5;
+  }
 `

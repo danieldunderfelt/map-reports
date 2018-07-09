@@ -12,6 +12,20 @@ import {
 } from '../../types/Report'
 import SortAndFilter from '../components/SortAndFilter'
 import fuzzysearch from 'fuzzysearch'
+import { app } from 'mobx-app'
+import { ReportActions } from '../../types/ReportActions'
+import styled from 'styled-components'
+
+const Report = styled.div`
+  cursor: pointer;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  
+  > h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+`
 
 interface Props extends RendersReports {
   state?: {
@@ -25,6 +39,7 @@ interface Props extends RendersReports {
     }[]
   }
   reports: Report[]
+  Report?: ReportActions
 }
 
 const sortValues = {
@@ -33,7 +48,7 @@ const sortValues = {
   priority: obj => Object.values(ReportPriorityEnum).indexOf(obj.priority),
 }
 
-@inject('state')
+@inject(app('Report'))
 @observer
 class ReportsList extends React.Component<Props, any> {
   @computed
@@ -76,30 +91,28 @@ class ReportsList extends React.Component<Props, any> {
   }
 
   render() {
-    const { reports } = this
+    const { reports, props } = this
+    const { Report: ReportStore } = props
 
     return (
       <div>
         <SortAndFilter reports={this.props.reports} />
         {reports.map(report => (
-          <React.Fragment key={report.id}>
-            <div>
-              <h2>{report.title}</h2>
-              <p>{report.message}</p>
-              <h4>
-                Reported by:{' '}
-                {typeof report.reporter === 'string'
-                  ? report.reporter
-                  : report.reporter.name}
-              </h4>
-              <p>
-                <ReportStatus report={report} readOnly={false} />
-                <br />
-                <ReportPriority report={report} readOnly={false} />
-              </p>
-            </div>
-            <hr />
-          </React.Fragment>
+          <Report key={report.id} onClick={() => ReportStore.focusReport(report.id)}>
+            <h2>{report.title}</h2>
+            <p>{report.message}</p>
+            <h4>
+              Reported by:{' '}
+              {typeof report.reporter === 'string'
+                ? report.reporter
+                : report.reporter.name}
+            </h4>
+            <p>
+              <ReportStatus report={report} readOnly={false} />
+              <br />
+              <ReportPriority report={report} readOnly={false} />
+            </p>
+          </Report>
         ))}
       </div>
     )
