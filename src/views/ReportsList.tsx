@@ -1,58 +1,30 @@
 import * as React from 'react'
-import { observer } from 'mobx-react'
-import { AnyFunction } from '../../types/AnyFunction'
-import { computed, observable, action } from 'mobx'
-import styled from 'styled-components'
+import { observer, inject } from 'mobx-react'
+import { computed } from 'mobx'
 import { orderBy, get } from 'lodash'
-import {
-  ReportPriority as ReportPriorityEnum,
-  ReportStatus as ReportStatusEnum,
-} from '../../types/Report'
 import ReportStatus from '../components/ReportStatus'
 import ReportPriority from '../components/ReportPriority'
 import { RendersReports } from '../../types/RendersReports'
+import {
+  Report,
+  ReportPriority as ReportPriorityEnum,
+  ReportStatus as ReportStatusEnum,
+} from '../../types/Report'
+import SortAndFilter from '../components/SortAndFilter'
 
 interface Props extends RendersReports {
-  startPolling?: AnyFunction
-  stopPolling?: AnyFunction
-}
-
-const SortItem = styled.span<{ active: boolean }>`
-  margin-right: 1rem;
-  padding: 0.5rem;
-  border: 1px solid ${({ active = false }) => (active ? '#ccc' : '#efefef')};
-  background: ${({ active = false }) => (active ? '#efefef' : 'transparent')};
-  font-family: monospace;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-
-  > span {
-    font-weight: ${({ active = false }) => (active ? 'bold' : 'normal')};
+  state?: {
+    sortReports: {
+      key: string
+      direction: string
+    }
+    filterReports: {
+      key: string
+      value: string
+    }
   }
-`
-
-const SortButton = styled.button<{ active: boolean }>`
-  background: 0;
-  border: 0;
-  padding: 0;
-  color: blue;
-  cursor: pointer;
-  width: 1.75rem;
-  text-align: center;
-  outline: 0;
-  font-weight: ${({ active = false }) => (active ? 'bold' : 'normal')};
-`
-
-const sortableKeys = [
-  'title',
-  'reporter',
-  'status',
-  'priority',
-  'createdAt',
-  'updatedAt',
-]
-
-const filterableKeys = ['title', 'reporter', 'status', 'priority']
+  reports: Report[]
+}
 
 const sortValues = {
   reporter: obj => (obj.reporter.type === 'manual' ? 1 : 0),
@@ -60,66 +32,34 @@ const sortValues = {
   priority: obj => Object.values(ReportPriorityEnum).indexOf(obj.priority),
 }
 
+@inject('state')
 @observer
 class ReportsList extends React.Component<Props, any> {
-  @observable
-  listSettings = {
-    sortBy: { key: 'createdAt', direction: 'desc' },
-    filter: { key: '', value: '' },
-  }
-
   @computed
-  get reports() {
-    const reports = get(this, 'props.reports', [])
-    const { sortBy } = this.listSettings
+  get reports(): Report[] {
+    const { state, reports = [] } = this.props
+    const { sortReports } = state
 
-    return orderBy(
+    return orderBy<Report>(
       reports,
       value => {
-        const getSortValue = get(sortValues, sortBy.key, obj => obj[sortBy.key])
+        const getSortValue = get(
+          sortValues,
+          sortReports.key,
+          obj => obj[sortReports.key],
+        )
         return getSortValue(value)
       },
-      sortBy.direction,
+      sortReports.direction,
     )
   }
 
-  onSort = (key, direction) =>
-    action((e: React.SyntheticEvent<any>) => {
-      e.preventDefault()
-      this.listSettings.sortBy.key = key
-      this.listSettings.sortBy.direction = direction
-    })
-
-  onFilter = e => {}
-
   render() {
-    const { reports, listSettings } = this
-    const { sortBy } = listSettings
+    const { reports } = this
 
     return (
       <div>
-        <div>
-          <div>
-            {sortableKeys.map((key, idx) => (
-              <SortItem active={sortBy.key === key} key={`sort_${key}_${idx}`}>
-                <span>{key}</span>{' '}
-                <SortButton
-                  active={sortBy.key === key && sortBy.direction === 'asc'}
-                  type="button"
-                  onClick={this.onSort(key, 'asc')}>
-                  asc
-                </SortButton>{' '}
-                /{' '}
-                <SortButton
-                  active={sortBy.key === key && sortBy.direction === 'desc'}
-                  type="button"
-                  onClick={this.onSort(key, 'desc')}>
-                  desc
-                </SortButton>
-              </SortItem>
-            ))}
-          </div>
-        </div>
+        <SortAndFilter />
         {reports.map(report => (
           <React.Fragment key={report.id}>
             <div>
