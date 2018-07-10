@@ -1,8 +1,11 @@
-import { Location } from './Location'
+import { ReportItemAlias } from './Report'
 
-export interface CreateReportData {
+export interface ReportInput {
+  message: string
   title: string
-  message?: string
   reporter: string
-  location?: Location
+}
+
+export interface CreateReportData extends ReportInput {
+  item: ReportItemAlias
 }

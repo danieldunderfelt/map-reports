@@ -1,4 +1,4 @@
-import { Reporter } from './Reporter'
+import { ReporterMeta } from './Reporter'
 import { Location } from './Location'
 
 export enum ReportStatus {
@@ -15,14 +15,27 @@ export enum ReportPriority {
   CRITICAL = 'CRITICAL',
 }
 
+export type ReportItemType = 'stop' | 'missing' | 'general'
+
+export interface ReportItem {
+  location: Location
+  type: ReportItemType
+}
+
+export interface StopItem extends ReportItem {
+  stopCode: string
+}
+
+export type ReportItemAlias = ReportItem
+
 export interface Report {
   id: string
   title: string
   message?: string
-  reporter: Reporter | string
+  reporter: ReporterMeta | string
   status: ReportStatus
   priority: ReportPriority
-  location?: Location
+  item: ReportItemAlias
   createdAt: number
   updatedAt: number
 }

@@ -33,8 +33,8 @@ export default inject(app('Map', 'Report'))(
   observer(({ reports = [], state, Report, Map: MapStore }: Props) => {
 
     const markers: any[] = reports
-      .filter(report => !!report.location && !!report.location.lat)
-      .map(({ location, message, id }) => ({
+      .filter(report => !!report.item.location && !!report.item.location.lat)
+      .map(({ item: {location}, message, id }) => ({
         active: state.focusedReport === id,
         inactive:
           (state.focusedReport !== null && state.focusedReport !== id) ||

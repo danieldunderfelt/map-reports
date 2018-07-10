@@ -46,6 +46,14 @@ class SubmitReport extends React.Component<Props, any> {
     Map.setClickedLocation(null)
   }
 
+  pickCurrentLocation = () => {
+    const { Map } = this.props.actions
+
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      Map.setClickedLocation({ lat: coords.latitude, lon: coords.longitude })
+    })
+  }
+
   onChange = which =>
     action((e: React.ChangeEvent<any>) => {
       this.props.state.reportDraft[which] = e.target.value
@@ -93,6 +101,8 @@ class SubmitReport extends React.Component<Props, any> {
           </p>
           <p>
             Location: <code>{JSON.stringify(toJS(location))}</code>
+            <br />
+            <button type="button" onClick={this.pickCurrentLocation}>Use current location</button>
           </p>
           <p>
             <button type="submit">Send</button>

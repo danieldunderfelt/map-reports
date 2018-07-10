@@ -1,8 +1,11 @@
 import { CreateReportData } from '../types/CreateReportData'
 import { createReport } from './createReport'
 import { Report, ReportPriority, ReportStatus } from '../types/Report'
-import { Reporter } from '../types/Reporter'
-import getRandomPosition from './getRandomPosition'
+import { ReporterMeta } from '../types/Reporter'
+import getRandomPosition from './util/getRandomPosition'
+import UnconnectedStopsReporter from './reporters/UnconnectedStopsReporter'
+
+// UnconnectedStopsReporter().run()
 
 const { ApolloServer, gql } = require('apollo-server')
 
@@ -11,7 +14,7 @@ const helsinkiLocation = {
   longitude: 24.945831
 }
 
-const reporters: Reporter[] = [
+const reporters: ReporterMeta[] = [
   {
     id: 'reporter_0',
     name: 'anonuser',
@@ -25,22 +28,6 @@ const reporters: Reporter[] = [
 ]
 
 const reports: Report[] = []
-
-for (let i = 0; i < 10; i++) {
-  const loc = getRandomPosition(helsinkiLocation.latitude, helsinkiLocation.longitude, 5000)
-
-  const rep = createReport(
-    {
-      title: 'Pysäkki huonosti',
-      message: 'Pysäkki H0333 on väärässä paikassa.',
-      reporter: reporters[Math.round(Math.random())].id,
-      location: { lat: loc.latitude, lon: loc.longitude },
-    },
-    i,
-  )
-
-  reports.push(rep)
-}
 
 const typeDefs = gql`
   enum ReportStatus {

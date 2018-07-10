@@ -58,7 +58,7 @@ injectGlobal`
   .leaflet-popup {
     &[style] {
        bottom: 1.75rem !important;
-       left: -121px !important;
+       margin-left: 1px;
     }
   }
 `
