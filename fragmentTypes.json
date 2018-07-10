@@ -1,0 +1,1 @@
+{"__schema":{"types":[{"kind":"UNION","name":"ReportItemType","possibleTypes":[{"name":"StopReportItem"},{"name":"ReportItem"}]}]}}

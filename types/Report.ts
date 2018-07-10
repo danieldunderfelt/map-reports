@@ -26,16 +26,14 @@ export interface StopItem extends ReportItem {
   stopCode: string
 }
 
-export type ReportItemAlias = ReportItem
-
-export interface Report {
+export interface Report<ItemType = ReportItem> {
   id: string
   title: string
   message?: string
   reporter: ReporterMeta | string
   status: ReportStatus
   priority: ReportPriority
-  item: ReportItemAlias
+  item: ItemType
   createdAt: number
   updatedAt: number
 }

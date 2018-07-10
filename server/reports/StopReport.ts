@@ -1,7 +1,12 @@
 import { createReport } from '../createReport'
 import { ReportInput } from '../../types/CreateReportData'
+import { StopItem } from '../../types/Report'
+import { Location } from '../../types/Location'
 
-type ReportedStop = { stopCode: string; lat: number; lon: number }
+type ReportedStop = {
+  stopCode: string
+  location: Location
+}
 
 /**
  * The StopReport type is used when the stop on the map does not match
@@ -9,13 +14,12 @@ type ReportedStop = { stopCode: string; lat: number; lon: number }
  * is where the stop should be on the map.
  */
 
-const StopReport = (reportData: ReportInput, stop: ReportedStop) => {
-  const report = createReport({
+const StopReport = (reportData: ReportInput, stop : ReportedStop) => {
+  const report = createReport<StopItem>({
     ...reportData,
     item: {
       type: 'stop',
-      stopCode: stop.stopCode,
-      location: { lat: stop.lat, lon: stop.lon },
+      ...stop
     },
   })
 

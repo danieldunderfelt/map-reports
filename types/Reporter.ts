@@ -13,11 +13,9 @@ export interface ReporterMeta {
   type: string
 }
 
-export type ReporterRun = () => Promise<Report[]>
-
 export interface Reporter {
   meta: ReporterMeta
-  run: ReporterRun
+  run: () => void
   schedule: (
     scheduler: typeof schedule,
   ) => ScheduledTask

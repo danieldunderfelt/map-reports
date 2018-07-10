@@ -1,22 +1,17 @@
 import { ApolloClient } from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
 import { withClientState } from 'apollo-link-state'
 import { ApolloLink, Observable } from 'apollo-link'
-import { get } from 'lodash'
+import fragmentTypes from '../../fragmentTypes.json'
+
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData: fragmentTypes
+});
 
 const cache = new InMemoryCache({
-  dataIdFromObject: object => {
-    const typename = get(object, '__typename', '')
-
-    switch (typename) {
-      case 'Location':
-        return `${typename}:${JSON.stringify(object)}`
-      default:
-        return `${typename}:${get(object, 'id', null)}`
-    }
-  },
+  fragmentMatcher
 })
 
 const request = async operation => {

@@ -7,10 +7,22 @@ export const ReportFragment = gql`
     message
     status
     priority
-    location {
-      lat
-      lon
-      __typename
+    item {
+      ... on StopReportItem {
+        stopCode
+        type
+        location {
+          lat
+          lon
+        } 
+      }
+      ... on ReportItem {
+        type
+        location {
+          lat
+          lon
+        }
+      }
     }
     createdAt
     updatedAt

@@ -8,7 +8,6 @@ import { AnyFunction } from '../../types/AnyFunction'
 import { reportsQuery } from '../queries/reportsQuery'
 import { updateQuery } from '../helpers/updateQuery'
 import { Report } from '../../types/Report'
-import { app } from 'mobx-app'
 import { RouterType } from 'pathricia'
 import routes from '../routes'
 
@@ -71,7 +70,10 @@ class SubmitReport extends React.Component<Props, any> {
         reportData: {
           title,
           message,
-          location,
+          item: {
+            type: 'general',
+            location,
+          },
           reporter: 'reporter_0',
         },
       },

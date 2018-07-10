@@ -1,4 +1,4 @@
-import { ReportItemAlias } from './Report'
+import { ReportItem } from './Report'
 
 export interface ReportInput {
   message: string
@@ -6,6 +6,6 @@ export interface ReportInput {
   reporter: string
 }
 
-export interface CreateReportData extends ReportInput {
-  item: ReportItemAlias
+export interface CreateReportData<ItemType = ReportItem> extends ReportInput {
+  item: ItemType
 }

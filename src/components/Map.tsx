@@ -30,14 +30,14 @@ class Map extends React.Component<any, any> {
   }
 
   render() {
-    const { markers = [], onMapClick = false } = this.props
+    const { markers = [], onMapClick } = this.props
 
     const position = this.getMapPosition()
     const zoom = position !== this.defaultPosition ? 16 : 13
 
     return (
       <LeafletMap
-        onClick={typeof onMapClick === 'function' ? onMapClick : () => {}}
+        onClick={onMapClick}
         center={position}
         zoom={zoom}
         minZoom={6}

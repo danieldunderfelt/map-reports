@@ -2,17 +2,29 @@ import { CreateReportData } from '../types/CreateReportData'
 import { createReport } from './createReport'
 import { Report, ReportPriority, ReportStatus } from '../types/Report'
 import { ReporterMeta } from '../types/Reporter'
-import getRandomPosition from './util/getRandomPosition'
 import UnconnectedStopsReporter from './reporters/UnconnectedStopsReporter'
-
-// UnconnectedStopsReporter().run()
 
 const { ApolloServer, gql } = require('apollo-server')
 
 const helsinkiLocation = {
   latitude: 60.192059,
-  longitude: 24.945831
+  longitude: 24.945831,
 }
+
+const reports: Report[] = []
+
+function publishReport(report) {
+  reports.push(report)
+}
+
+// Create reporter for unconnected stops
+const stopsReporter = UnconnectedStopsReporter(
+  {
+    id: 'reporter_1',
+    type: 'automatic',
+  },
+  publishReport,
+)
 
 const reporters: ReporterMeta[] = [
   {
@@ -20,14 +32,11 @@ const reporters: ReporterMeta[] = [
     name: 'anonuser',
     type: 'manual',
   },
-  {
-    id: 'reporter_1',
-    name: 'osm_kyttä',
-    type: 'automatic',
-  },
+  stopsReporter.meta,
 ]
 
-const reports: Report[] = []
+// Fetch unconnected stops and create reports.
+stopsReporter.run()
 
 const typeDefs = gql`
   enum ReportStatus {
@@ -49,10 +58,28 @@ const typeDefs = gql`
     lon: Float!
   }
 
+  type ReportItem {
+    location: Location!
+    type: String!
+  }
+
+  input CreateReportItem {
+    location: CreateReportLocation!
+    type: String!
+  }
+
+  type StopReportItem {
+    location: Location!
+    type: String!
+    stopCode: String!
+  }
+
   input CreateReportLocation {
     lat: String!
     lon: String!
   }
+
+  union ReportItemType = StopReportItem | ReportItem
 
   type Report {
     id: ID!
@@ -61,7 +88,7 @@ const typeDefs = gql`
     reporter: Reporter!
     status: ReportStatus!
     priority: ReportPriority!
-    location: Location
+    item: ReportItemType!
     createdAt: Int!
     updatedAt: Int!
   }
@@ -70,7 +97,7 @@ const typeDefs = gql`
     title: String!
     message: String
     reporter: String!
-    location: CreateReportLocation
+    item: CreateReportItem!
     priority: ReportPriority
   }
 
@@ -97,10 +124,9 @@ const resolvers = {
   },
   Mutation: {
     createReport: (_, { reportData }: { reportData: CreateReportData }): Report => {
-      const index = reports.length
-      const report = createReport(reportData, index)
+      const report = createReport(reportData)
+      publishReport(report)
 
-      reports.push(report)
       return report
     },
     setStatus: (
@@ -128,6 +154,15 @@ const resolvers = {
 
       report.priority = newPriority
       return report
+    },
+  },
+  ReportItemType: {
+    __resolveType: obj => {
+      if (obj.stopCode) {
+        return 'StopReportItem'
+      }
+
+      return 'ReportItem'
     },
   },
   Report: {

@@ -7,11 +7,11 @@ import { Location } from '../../types/Location'
  * Describe the issue further in the message.
  */
 
-const MissingReport = (reportData: ReportInput, location: Location) => {
+const GeneralReport = (reportData: ReportInput, location: Location) => {
   const report = createReport({
     ...reportData,
     item: {
-      type: 'missing',
+      type: 'general',
       location,
     },
   })
@@ -19,4 +19,4 @@ const MissingReport = (reportData: ReportInput, location: Location) => {
   return report
 }
 
-export default MissingReport
+export default GeneralReport
