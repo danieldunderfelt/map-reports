@@ -28,7 +28,8 @@ interface Props extends RendersReports {
 
 export default inject(app('Map'))(
   observer(({ reports = [], state, Map: MapStore }: Props) => {
-    const markers = reports
+
+    const markers: any[] = reports
       .filter(report => !!report.location && !!report.location.lat)
       .map(({ location, message, id }) => ({
         active: state.focusedReport === id,
@@ -44,6 +45,7 @@ export default inject(app('Map'))(
       markers.push({
         active: true,
         inactive: false,
+        noFocus: true,
         id: 'clicked_location',
         position: L.latLng({
           lat: state.lastClickedLocation.lat,

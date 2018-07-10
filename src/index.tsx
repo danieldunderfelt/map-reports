@@ -14,6 +14,7 @@ import { typography } from './style/typography'
 import { injectGlobal } from 'styled-components'
 import MapStore from './stores/MapStore'
 import ReportStore from './stores/ReportStore'
+import color from './style/colors'
 
 configure({
   computedRequiresReaction: true,
@@ -29,6 +30,7 @@ injectGlobal`
     height: 100%;
   }
   
+  ${color}
   ${typography}
 `
 

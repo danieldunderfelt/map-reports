@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { injectGlobal } from 'styled-components'
 import * as L from 'leaflet'
-import classnames from 'classnames'
+import classNames from 'classnames'
+import { darken } from 'polished'
 
 injectGlobal`
   .marker-icon {
@@ -9,39 +10,54 @@ injectGlobal`
     &[style] {
       width: 0 !important;
       height: 0 !important;
+      background: red;
       margin-top: 0 !important;
       margin-left: 0 !important;
     } 
     
     &:before {
-      display: block;
       position: absolute;
-      left: 50%;
-      bottom: 10px;
+      left: 6px;
+      bottom: -4px;
+      width: 1.5rem;
+      height: 1.5rem;
       content: "";
-      width: 2rem;
-      height: 2rem;
-      border: 1px solid white;
+      border: 0;
+      box-shadow: none;
+      background: linear-gradient(160deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.5));
+      border-radius: 50% 50% 0 50%;
+      transform: skewX(-50deg) rotate(45deg) translateX(-50%);
+    }
+    
+    &:after {
+      position: absolute;
+      left: -3px;
+      bottom: -4px;
+      content: "";
+      width: 1.5rem;
+      height: 1.5rem;
       background: blue;
-      box-shadow: 0 0 10px rgba(0,0,0,1);
       border-radius: 50% 50% 0 50%;
       transform: rotate(45deg) translateX(-50%);
     }
    
-    &.focused:before {
+    &.focused:after {
       background: red;
     }
     
-    &.blurred:before {
+    &.blurred {
       opacity: 0.33;
-      background: blue;
+      
+      &:after {
+        background: blue; 
+      }
     }
   }
 `
 
 export default ({ focused = false, blurred = false }) =>
   L.divIcon({
-    className: classnames({
+    className: classNames({
       'marker-icon': true,
       focused: focused && !blurred,
       blurred: blurred && !focused,

@@ -22,7 +22,7 @@ class Map extends React.Component<any, any> {
     const { markers } = this.props
 
     return markers.reduce(
-      (selected, marker) => (marker.active ? marker.position : selected),
+      (selected, marker) => (marker.active && !marker.noFocus ? marker.position : selected),
       this.defaultPosition,
     )
   }

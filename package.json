@@ -6,6 +6,7 @@
     "server:dev": "nodemon --signal SIGTERM --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
   },
   "dependencies": {
+    "@types/classnames": "^2.2.4",
     "@types/leaflet": "^1.2.7",
     "apollo-cache-inmemory": "^1.2.5",
     "apollo-client": "^2.3.5",
@@ -29,6 +30,7 @@
     "mobx-utils": "^5.0.0",
     "normalize.css": "^8.0.0",
     "pathricia": "^1.0.1",
+    "polished": "^1.9.3",
     "react": ">= 0.14.0 < 17.0.0-0",
     "react-apollo": "^2.1.9",
     "react-dom": "^16.4.1",
