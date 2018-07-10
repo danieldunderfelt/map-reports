@@ -34,7 +34,7 @@ export default inject(app('Report'))(
   observer(({ reports = [], state, Report }: Props) => {
     const markers: Marker[] = reports
       .filter(report => !!get(report, 'item.location.lat', 0))
-      .map(({ item: { location }, message, id }) => {
+      .map(({ item: { location, type }, message, id }) => {
         const isInactive =
           (state.focusedReport !== null && state.focusedReport !== id) ||
           state.mapMode === MapModes.pick
@@ -49,6 +49,7 @@ export default inject(app('Report'))(
                 ? MarkerState.inactive
                 : MarkerState.default,
           id,
+          type,
           position: markerPosition,
           message,
           onClick: () => Report.focusReport(id),
@@ -57,6 +58,7 @@ export default inject(app('Report'))(
 
     if (state.mapMode === MapModes.pick && state.lastClickedLocation !== null) {
       markers.push({
+        type: 'new-report',
         state: MarkerState.focus,
         id: 'clicked_location',
         position: [state.lastClickedLocation.lat, state.lastClickedLocation.lon],

@@ -10,6 +10,7 @@ export const enum MarkerState {
 export interface Marker {
   state: MarkerState
   id: string
+  type: string
   position: LatLngExpression
   message?: string
   onClick?: AnyFunction

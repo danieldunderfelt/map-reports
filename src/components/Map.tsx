@@ -70,12 +70,13 @@ class Map extends React.Component<Props, any> {
           url={url}
         />
         {markers.length > 0 &&
-          markers.map(({ position, message, id, state: markerState, onClick }) => (
+          markers.map(({ type, position, message, id, state: markerState, onClick }) => (
             <Marker
               onClick={onClick}
               key={`marker_${id}`}
               position={position}
               icon={MarkerIcon({
+                type,
                 focused: markerState === MarkerState.focus,
                 blurred: markerState === MarkerState.inactive,
               })}>

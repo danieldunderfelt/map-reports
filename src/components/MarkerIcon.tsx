@@ -53,6 +53,18 @@ injectGlobal`
         background: blue; 
       }
     }
+    
+    &.type_stop:after {
+      background: darkorchid;
+    }
+    
+    &.type_general:after {
+      background: var(--blue);
+    }
+    
+    &.type_new-report:after {
+      background: lightgreen;
+    }
   }
   
   .leaflet-popup {
@@ -63,10 +75,11 @@ injectGlobal`
   }
 `
 
-export default ({ focused = false, blurred = false }) =>
+export default ({ focused = false, blurred = false, type }) =>
   L.divIcon({
     className: classNames({
       'marker-icon': true,
+      [`type_${type}`]: !!type,
       focused: focused && !blurred,
       blurred: blurred && !focused,
     }),
