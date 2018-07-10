@@ -4,9 +4,14 @@ import TileLayer from 'react-leaflet/es/TileLayer'
 import Marker from 'react-leaflet/es/Marker'
 import Popup from 'react-leaflet/es/Popup'
 import 'leaflet/dist/leaflet.css'
-import { observer, inject} from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
 import { app } from 'mobx-app'
+import { LatLngExpression, LeafletEvent, LeafletMouseEvent } from 'leaflet'
+import { Location } from '../../types/Location'
+import { MarkerState } from '../../types/Marker'
+import { get } from 'lodash'
+import * as L from 'leaflet'
 
 const attribution = `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
@@ -15,31 +20,46 @@ Imagery © <a href="http://mapbox.com">Mapbox</a>`
 const url =
   'https://digitransit-dev-cdn-origin.azureedge.net/map/v1/hsl-map/{z}/{x}/{y}{retina}.png'
 
+let prevMapLocation: L.LatLngExpression = [60.1689784, 24.9230033]
+
+interface Props {
+  markers: Marker[]
+  mapLocation: LatLngExpression
+  mapZoom: number
+  Map?: {
+    setClickedLocation: (location: Location) => void
+    setMapLocation: (location: LatLngExpression) => void
+  }
+}
+
 @inject(app('Map'))
 @observer
-class Map extends React.Component<any, any> {
-  defaultPosition = [60.1689784, 24.9230033]
+class Map extends React.Component<Props, any> {
 
-  getMapPosition() {
-    const { markers } = this.props
+  onMapClick = (event: LeafletMouseEvent) => {
+    const { Map } = this.props
+    const { lat, lng } = event.latlng
 
-    return markers.reduce(
-      (selected, marker) => (marker.active && !marker.noFocus ? marker.position : selected),
-      this.defaultPosition,
-    )
+    Map.setClickedLocation({ lat, lon: lng })
+  }
+
+  onMoveEnd = (event: LeafletEvent) => {
+    prevMapLocation = get(event, 'target._lastCenter')
   }
 
   render() {
-    const { markers = [], onMapClick } = this.props
-
-    const position = this.getMapPosition()
-    const zoom = position !== this.defaultPosition ? 16 : 13
+    const {
+      markers = [],
+      mapLocation = prevMapLocation,
+      mapZoom,
+    } = this.props
 
     return (
       <LeafletMap
-        onClick={onMapClick}
-        center={position}
-        zoom={zoom}
+        onMoveend={this.onMoveEnd}
+        onClick={this.onMapClick}
+        center={mapLocation}
+        zoom={mapZoom}
         minZoom={6}
         maxZoom={25}>
         <TileLayer
@@ -50,17 +70,18 @@ class Map extends React.Component<any, any> {
           url={url}
         />
         {markers.length > 0 &&
-          markers.map(
-            ({ position, message, id, active = false, inactive = false, onClick }) => (
-              <Marker
-                onClick={onClick}
-                key={`marker_${id}`}
-                position={position}
-                icon={MarkerIcon({ focused: active, blurred: inactive })}>
-                <Popup>{message}</Popup>
-              </Marker>
-            ),
-          )}
+          markers.map(({ position, message, id, state: markerState, onClick }) => (
+            <Marker
+              onClick={onClick}
+              key={`marker_${id}`}
+              position={position}
+              icon={MarkerIcon({
+                focused: markerState === MarkerState.focus,
+                blurred: markerState === MarkerState.inactive,
+              })}>
+              <Popup>{message}</Popup>
+            </Marker>
+          ))}
       </LeafletMap>
     )
   }

@@ -1,6 +1,5 @@
 import { action, extendObservable } from 'mobx'
 import routes from '../routes'
-import { LeafletMouseEvent } from 'leaflet'
 import { Location } from '../../types/Location'
 
 export const enum MapModes {
@@ -18,17 +17,11 @@ const MapStore = (state, utils) => {
     },
   })
 
-  const onMapClick = (event: LeafletMouseEvent) => {
-    const { lat, lng } = event.latlng
-    setClickedLocation({ lat, lon: lng })
-  }
-
   const setClickedLocation = action((location: Location) => {
     mapState.lastClickedLocation = location
   })
 
   return {
-    onMapClick,
     setClickedLocation,
   }
 }

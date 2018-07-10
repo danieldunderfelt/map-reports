@@ -20,7 +20,7 @@ const Report = styled.div`
   cursor: pointer;
   padding: 1rem;
   border-bottom: 1px solid #ccc;
-  
+
   > h2 {
     margin-top: 0;
     margin-bottom: 0;
