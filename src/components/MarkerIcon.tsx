@@ -17,16 +17,17 @@ injectGlobal`
     
     &:before {
       position: absolute;
-      left: 6px;
-      bottom: -4px;
+      left: 10px;
+      bottom: -5px;
       width: 1.5rem;
       height: 1.5rem;
       content: "";
       border: 0;
       box-shadow: none;
-      background: linear-gradient(160deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.5));
+      filter: blur(3px);
+      background: linear-gradient(-15deg, rgba(0,0,0,0.33) 30%, rgba(0,0,0,0));
       border-radius: 50% 50% 0 50%;
-      transform: skewX(-50deg) rotate(45deg) translateX(-50%);
+      transform: skew(-60deg, 15deg) rotate(30deg) translateX(-50%);
     }
     
     &:after {
@@ -51,6 +52,13 @@ injectGlobal`
       &:after {
         background: blue; 
       }
+    }
+  }
+  
+  .leaflet-popup {
+    &[style] {
+       bottom: 1.75rem !important;
+       left: -121px !important;
     }
   }
 `

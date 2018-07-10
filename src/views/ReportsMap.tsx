@@ -21,13 +21,16 @@ const MapContainer = styled.div`
 
 interface Props extends RendersReports {
   state?: any
+  Report?: {
+    focusReport: (reportId: string) => void
+  }
   Map?: {
     onMapClick: (event: LeafletMouseEvent) => void
   }
 }
 
-export default inject(app('Map'))(
-  observer(({ reports = [], state, Map: MapStore }: Props) => {
+export default inject(app('Map', 'Report'))(
+  observer(({ reports = [], state, Report, Map: MapStore }: Props) => {
 
     const markers: any[] = reports
       .filter(report => !!report.location && !!report.location.lat)
@@ -39,6 +42,7 @@ export default inject(app('Map'))(
         id,
         position: L.latLng(location.lat, location.lon),
         message,
+        onClick: () => Report.focusReport(id)
       }))
 
     if (state.mapMode === MapModes.pick && state.lastClickedLocation !== null) {
