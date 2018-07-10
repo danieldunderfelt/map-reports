@@ -45,7 +45,7 @@ const UnconnectedStopsReporter = (
 
     const unconnectedStopsData: UnconnectedStop[] = await neatCsv(lastFetchedCsv)
     unconnectedStopsData
-      .slice(0, 10)
+      .slice(0, 100)
       .forEach(stop => createReport(stop))
   }
 
