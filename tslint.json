@@ -1,0 +1,40 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-react",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier"
+  ],
+  "defaultSeverity": "warning",
+  "rules": {
+    "object-literal-sort-keys": false,
+    "ban": false,
+    "ban-types": false,
+    "ordered-imports": false,
+    "no-submodule-imports": false,
+    "no-any": false,
+    "member-access": false,
+    "no-arg": true,
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
+    "variable-name": [ "allow-leading-underscore" ],
+    "sort": false,
+    "no-bitwise": true,
+    "no-console": false,
+    "interface-over-type-literal": false,
+    "no-debugger": true,
+    "no-duplicate-variable": true,
+    "no-eval": true,
+    "curly": true,
+    "no-unused-expression": false,
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "jsx-boolean-value": false,
+    "no-shadowed-variable": true,
+    "no-empty": false,
+    "prefer-conditional-expression": false,
+    "prettier": true
+  }
+}
