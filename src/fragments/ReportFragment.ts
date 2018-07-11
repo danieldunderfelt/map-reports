@@ -11,13 +11,15 @@ export const ReportFragment = gql`
       ... on StopReportItem {
         stopCode
         type
+        recommendedMapZoom
         location {
           lat
           lon
-        } 
+        }
       }
       ... on ReportItem {
         type
+        recommendedMapZoom
         location {
           lat
           lon

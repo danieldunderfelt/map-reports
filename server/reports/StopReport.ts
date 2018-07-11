@@ -19,6 +19,7 @@ const StopReport = (reportData: ReportInput, stop : ReportedStop) => {
     ...reportData,
     item: {
       type: 'stop',
+      recommendedMapZoom: 18,
       ...stop
     },
   })

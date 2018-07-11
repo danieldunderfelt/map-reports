@@ -13,6 +13,7 @@ const GeneralReport = (reportData: ReportInput, location: Location) => {
     item: {
       type: 'general',
       location,
+      recommendedMapZoom: 16
     },
   })
 

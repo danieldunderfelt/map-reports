@@ -11,6 +11,7 @@ export interface Marker {
   state: MarkerState
   id: string
   type: string
+  zoom?: number
   position: LatLngExpression
   message?: string
   onClick?: AnyFunction

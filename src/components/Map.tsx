@@ -47,8 +47,9 @@ class Map extends React.Component<Props, any> {
           : null
 
         if (focusedMarker) {
+          console.log(focusedMarker.zoom)
           MapStore.setMapLocation(focusedMarker.position)
-          MapStore.setMapZoom(16)
+          MapStore.setMapZoom(focusedMarker.zoom || 16)
         }
       },
     )

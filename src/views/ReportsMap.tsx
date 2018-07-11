@@ -30,7 +30,7 @@ export default inject(app('Report'))(
   observer(({ reports = [], state, Report }: Props) => {
     const markers: Marker[] = reports
       .filter(report => !!get(report, 'item.location.lat', 0))
-      .map(({ item: { location, type }, message, id }) => {
+      .map(({ item: { location, type, recommendedMapZoom = 16 }, message, id }) => {
         const isInactive =
           (state.focusedReport !== null && state.focusedReport !== id) ||
           state.mapMode === MapModes.pick
@@ -45,6 +45,7 @@ export default inject(app('Report'))(
                 ? MarkerState.inactive
                 : MarkerState.default,
           id,
+          zoom: recommendedMapZoom,
           type,
           position: markerPosition,
           message,
