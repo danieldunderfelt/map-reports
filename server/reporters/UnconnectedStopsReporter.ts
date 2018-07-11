@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import * as got from 'got'
-import * as neatCsv from 'neat-csv'
+import got from 'got'
+import neatCsv from 'neat-csv'
 import { uniqBy } from 'lodash'
 import StopReport from '../reports/StopReport'
 import { Reporter, ReporterConfig } from '../../types/Reporter'

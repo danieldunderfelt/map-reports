@@ -6,6 +6,8 @@
     "sourceMap": false,
     "allowJs": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "rootDir": "server",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
@@ -13,7 +15,6 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false
   },

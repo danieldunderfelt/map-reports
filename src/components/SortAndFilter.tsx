@@ -134,7 +134,7 @@ class SortAndFilter extends React.Component<Props, any> {
           options={[{ value: '', label: 'Valitse suodatin' }, ...keyOptions]}
           value={filterItem.key}
         />
-        {filterType === 'search' ? (
+        {filterItem.key && (filterType === 'search' ? (
           <input
             type="text"
             value={filterItem.value}
@@ -151,7 +151,7 @@ class SortAndFilter extends React.Component<Props, any> {
               Report.setFilterValues(index, filterItem.key, e.target.value)
             }
           />
-        )}
+        ))}
         <button onClick={() => Report.removeFilter(index)}>-</button>
       </FilterItem>
     )
