@@ -58,25 +58,28 @@ const typeDefs = gql`
     lon: Float!
   }
 
+  input CreateReportLocation {
+    lat: String!
+    lon: String!
+  }
+
   type ReportItem {
     location: Location!
     type: String!
+    recommendedMapZoom: Int
   }
 
   input CreateReportItem {
     location: CreateReportLocation!
     type: String!
+    recommendedMapZoom: Int
   }
 
   type StopReportItem {
     location: Location!
     type: String!
     stopCode: String!
-  }
-
-  input CreateReportLocation {
-    lat: String!
-    lon: String!
+    recommendedMapZoom: Int
   }
 
   union ReportItemType = StopReportItem | ReportItem

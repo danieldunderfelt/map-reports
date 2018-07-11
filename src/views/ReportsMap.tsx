@@ -1,14 +1,12 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import Map from '../components/Map'
-import * as L from 'leaflet'
 import { RendersReports } from '../../types/RendersReports'
 import { inject, observer } from 'mobx-react'
 import { MapModes } from '../stores/MapStore'
 import { app } from 'mobx-app'
 import { get } from 'lodash'
 import { Marker, MarkerState } from '../../types/Marker'
-import { AnyFunction } from '../../types/AnyFunction'
 import { ReportActions } from '../../types/ReportActions'
 import { LatLngExpression } from 'leaflet'
 
@@ -22,8 +20,6 @@ const MapContainer = styled.div`
     height: 100%;
   }
 `
-
-const defaultMapZoom = 13
 
 interface Props extends RendersReports {
   state?: any
@@ -66,20 +62,16 @@ export default inject(app('Report'))(
       })
     }
 
-    let location
-    let zoom = defaultMapZoom
-
-    const focusedMarker =
-      state.focusedReport !== null && markers.find(m => m.id === state.focusedReport)
-
-    if (focusedMarker) {
-      location = focusedMarker.position
-      zoom = 16
-    }
-
     return (
       <MapContainer>
-        <Map mapLocation={location} mapZoom={zoom} markers={markers} />
+        <Map
+          onMapClick={() => {
+            if (state.mapMode !== MapModes.pick) {
+              Report.focusReport(null)
+            }
+          }}
+          markers={markers}
+        />
       </MapContainer>
     )
   }),

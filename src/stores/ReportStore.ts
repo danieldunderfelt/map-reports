@@ -48,7 +48,7 @@ const ReportStore = (state): ReportActions => {
     reportState.filterReports.splice(index, 1)
   })
 
-  const focusReport = action((reportId?: string) => {
+  const focusReport = action((reportId: string = null) => {
     let setVal = reportId
 
     if (reportState.focusedReport === reportId) {

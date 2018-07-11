@@ -20,6 +20,7 @@ export type ReportItemType = 'stop' | 'missing' | 'general'
 export interface ReportItem {
   location: Location
   type: ReportItemType
+  recommendedMapZoom?: number
 }
 
 export interface StopItem extends ReportItem {
