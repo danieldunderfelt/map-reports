@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { inject, observer} from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { omit } from 'lodash'
 import { computed } from 'mobx'
 
@@ -11,9 +11,12 @@ interface Props<P> {
 
 @inject('state')
 @observer
-class Route<ComponentProps> extends React.Component<ComponentProps & Props<ComponentProps>, any> {
-
-  @computed get routeShouldRender() {
+class Route<ComponentProps> extends React.Component<
+  ComponentProps & Props<ComponentProps>,
+  any
+> {
+  @computed
+  get routeShouldRender() {
     const { path, state } = this.props
     return state.route === path
   }
@@ -22,7 +25,9 @@ class Route<ComponentProps> extends React.Component<ComponentProps & Props<Compo
     const { component } = this.props
     const componentProps = omit(this.props, 'component')
 
-    return this.routeShouldRender ? React.createElement(component, componentProps) : null
+    return this.routeShouldRender
+      ? React.createElement(component, componentProps)
+      : null
   }
 }
 

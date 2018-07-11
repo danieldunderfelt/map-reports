@@ -47,13 +47,13 @@ let zoom = defaultMapZoom
 class Map extends React.Component<Props, State> {
   mapRef = React.createRef()
 
+  // Get the position for the currently focused marker or return
+  // the default center and zoom values if no marker is focused.
   getFocusedPosition = () => {
     const { focusedMarker, markers } = this.props
 
     const marker = focusedMarker
-      ? markers.find(
-          marker => marker.id === focusedMarker,
-        )
+      ? markers.find(marker => marker.id === focusedMarker)
       : null
 
     if (!marker) {

@@ -18,14 +18,15 @@ injectGlobal`
     &:before {
       position: absolute;
       z-index: -1;
-      left: 10px;
+      left: 14px;
       bottom: -5px;
       width: 1.5rem;
       height: 1.5rem;
       content: "";
       border: 0;
       box-shadow: none;
-      filter: blur(3px);
+      filter: blur(4px);
+      opacity: 0.75;
       background: linear-gradient(-15deg, rgba(0,0,0,0.33) 30%, rgba(0,0,0,0));
       border-radius: 50% 50% 0 50%;
       transform: skew(-60deg, 15deg) rotate(30deg) translateX(-50%);
@@ -39,7 +40,7 @@ injectGlobal`
       content: "";
       width: 1.5rem;
       height: 1.5rem;
-      background: blue;
+      background: var(--blue);
       border-radius: 50% 50% 0 50%;
       transform: rotate(45deg) translateX(-50%);
     }

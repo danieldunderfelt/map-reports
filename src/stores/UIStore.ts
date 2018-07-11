@@ -9,6 +9,7 @@ const UIStore = (state, utils) => {
     uiState.route = route
   })
 
+  setCurrentRoute(utils.router.get())
   utils.router.listen(setCurrentRoute)
 
   return {
