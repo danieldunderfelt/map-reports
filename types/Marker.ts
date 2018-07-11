@@ -1,4 +1,4 @@
-import { LatLngExpression } from 'leaflet'
+import { LatLng } from 'leaflet'
 import { AnyFunction } from './AnyFunction'
 
 export const enum MarkerState {
@@ -12,7 +12,7 @@ export interface Marker {
   id: string
   type: string
   zoom?: number
-  position: LatLngExpression
+  position: LatLng
   message?: string
   onClick?: AnyFunction
 }

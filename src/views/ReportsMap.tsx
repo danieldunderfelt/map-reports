@@ -8,7 +8,7 @@ import { app } from 'mobx-app'
 import { get } from 'lodash'
 import { Marker, MarkerState } from '../../types/Marker'
 import { ReportActions } from '../../types/ReportActions'
-import { LatLngExpression } from 'leaflet'
+import { LatLng, latLng } from 'leaflet'
 
 const MapContainer = styled.div`
   width: 100%;
@@ -35,7 +35,7 @@ export default inject(app('Report'))(
           (state.focusedReport !== null && state.focusedReport !== id) ||
           state.mapMode === MapModes.pick
 
-        const markerPosition: LatLngExpression = [location.lat, location.lon]
+        const markerPosition: LatLng = latLng(location.lat, location.lon)
 
         return {
           state:
@@ -58,7 +58,10 @@ export default inject(app('Report'))(
         type: 'new-report',
         state: MarkerState.focus,
         id: 'clicked_location',
-        position: [state.lastClickedLocation.lat, state.lastClickedLocation.lon],
+        position: latLng(
+          state.lastClickedLocation.lat,
+          state.lastClickedLocation.lon,
+        ),
         message: 'Create new issue here.',
       })
     }
@@ -66,6 +69,7 @@ export default inject(app('Report'))(
     return (
       <MapContainer>
         <Map
+          focusedMarker={state.focusedReport}
           onMapClick={() => {
             if (state.mapMode !== MapModes.pick) {
               Report.focusReport(null)

@@ -6,13 +6,12 @@ import Popup from 'react-leaflet/es/Popup'
 import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
 import { app } from 'mobx-app'
-import { LatLngExpression, LeafletEvent, LeafletMouseEvent } from 'leaflet'
+import { throttle } from 'lodash'
+import { LatLng, latLng, LatLngExpression, LeafletMouseEvent } from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
-import { get } from 'lodash'
 import 'leaflet/dist/leaflet.css'
 import { AnyFunction } from '../../types/AnyFunction'
-import { reaction } from 'mobx'
 
 const attribution = `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
@@ -23,8 +22,8 @@ const url =
 
 interface Props {
   markers: Marker[]
-  state?: any
   onMapClick: AnyFunction
+  focusedMarker?: string
   Map?: {
     setClickedLocation: (location: Location) => void
     setMapLocation: (location: LatLngExpression) => void
@@ -32,27 +31,42 @@ interface Props {
   }
 }
 
+interface State {
+  center: LatLng
+  zoom: number
+}
+
+const defaultMapLocation: LatLng = latLng(60.1689784, 24.9230033)
+const defaultMapZoom = 13
+
+let center = defaultMapLocation
+let zoom = defaultMapZoom
+
 @inject(app('Map'))
 @observer
-class Map extends React.Component<Props, any> {
-  focusObserver = null
+class Map extends React.Component<Props, State> {
+  mapRef = React.createRef()
 
-  componentDidMount() {
-    const { state, Map: MapStore, markers } = this.props
-    this.focusObserver = reaction(
-      () => state.focusedReport,
-      focused => {
-        const focusedMarker = focused
-          ? markers.find(marker => marker.id === focused)
-          : null
+  getFocusedPosition = () => {
+    const { focusedMarker, markers } = this.props
 
-        if (focusedMarker) {
-          console.log(focusedMarker.zoom)
-          MapStore.setMapLocation(focusedMarker.position)
-          MapStore.setMapZoom(focusedMarker.zoom || 16)
-        }
-      },
-    )
+    const marker = focusedMarker
+      ? markers.find(marker => marker.id === focusedMarker)
+      : null
+
+    if (!marker) {
+      return {
+        center,
+        zoom
+      }
+    }
+
+    const { zoom: markerZoom = 16, position } = marker
+
+    return {
+      center: position,
+      zoom: markerZoom,
+    }
   }
 
   onMarkerClick = markerClickHandler => (event: LeafletMouseEvent) => {
@@ -67,26 +81,25 @@ class Map extends React.Component<Props, any> {
     onMapClick(event)
   }
 
-  onZoom = (event: LeafletEvent) => {
-    const { Map: MapStore } = this.props
-    MapStore.setMapZoom(get(event, 'target._zoom', 13))
-  }
-
-  onMove = (event: LeafletEvent) => {
-    const { Map: MapStore } = this.props
-    MapStore.setMapLocation(get(event, 'target._lastCenter'))
+  trackViewport = ({ center: viewportCenter, zoom: viewportZoom }) => {
+    const centerLatLng = latLng(viewportCenter[0], viewportCenter[1])
+    center = centerLatLng
+    zoom = viewportZoom
   }
 
   render() {
-    const { markers = [], state } = this.props
+    const { markers = [] } = this.props
+    const { center: mapCenter, zoom: mapZoom } = this.getFocusedPosition()
 
     return (
       <LeafletMap
-        onMove={this.onMove}
-        onZoom={this.onZoom}
+        onViewportChange={this.trackViewport}
         onClick={this.onMapClick}
-        center={state.mapLocation}
-        zoom={state.mapZoom}
+        viewport={{
+          center: mapCenter,
+          zoom: mapZoom,
+        }}
+        ref={this.mapRef}
         minZoom={10}
         maxZoom={18}>
         <TileLayer
@@ -108,7 +121,7 @@ class Map extends React.Component<Props, any> {
                   focused: markerState === MarkerState.focus,
                   blurred: markerState === MarkerState.inactive,
                 })}>
-                <Popup>{message}</Popup>
+                {message && <Popup>{message}</Popup>}
               </Marker>
             ),
           )}

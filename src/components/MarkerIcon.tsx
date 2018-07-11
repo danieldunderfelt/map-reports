@@ -17,6 +17,7 @@ injectGlobal`
     
     &:before {
       position: absolute;
+      z-index: -1;
       left: 10px;
       bottom: -5px;
       width: 1.5rem;
@@ -32,6 +33,7 @@ injectGlobal`
     
     &:after {
       position: absolute;
+      z-index: 10;
       left: -3px;
       bottom: -4px;
       content: "";
