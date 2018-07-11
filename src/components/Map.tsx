@@ -7,7 +7,7 @@ import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
 import { app } from 'mobx-app'
 import { throttle } from 'lodash'
-import { LatLng, latLng, LatLngExpression, LeafletMouseEvent } from 'leaflet'
+import { LatLng, latLng, LatLngExpression, LeafletMouseEvent, marker } from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
 import 'leaflet/dist/leaflet.css'
@@ -51,13 +51,15 @@ class Map extends React.Component<Props, State> {
     const { focusedMarker, markers } = this.props
 
     const marker = focusedMarker
-      ? markers.find(marker => marker.id === focusedMarker)
+      ? markers.find(
+          marker => marker.id === focusedMarker,
+        )
       : null
 
     if (!marker) {
       return {
         center,
-        zoom
+        zoom,
       }
     }
 
@@ -95,10 +97,8 @@ class Map extends React.Component<Props, State> {
       <LeafletMap
         onViewportChange={this.trackViewport}
         onClick={this.onMapClick}
-        viewport={{
-          center: mapCenter,
-          zoom: mapZoom,
-        }}
+        center={mapCenter}
+        zoom={mapZoom}
         ref={this.mapRef}
         minZoom={10}
         maxZoom={18}>
