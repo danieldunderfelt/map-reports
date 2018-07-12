@@ -65,8 +65,6 @@ class Map extends React.Component<Props, State> {
 
     const { zoom: markerZoom = 16, position } = marker
 
-    console.log(markerZoom)
-
     return {
       center: position,
       zoom: markerZoom,

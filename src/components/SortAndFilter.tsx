@@ -6,6 +6,9 @@ import { uniq, get } from 'lodash'
 import { Report } from '../../types/Report'
 import Select from '../helpers/Select'
 import { ReportActions } from '../../types/ReportActions'
+import { Query } from 'react-apollo'
+import gql from 'graphql-tag'
+import { filter } from 'async'
 
 const SortButton = styled.button<{ active: boolean }>`
   background: 0;
@@ -28,14 +31,7 @@ const FilterItem = styled.div`
   border: 1px solid #eee;
 `
 
-const sortableKeys = [
-  'title',
-  'reporter',
-  'status',
-  'priority',
-  'createdAt',
-  'updatedAt',
-]
+const sortableKeys = ['title', 'reporter', 'status', 'priority', 'createdAt', 'updatedAt']
 
 const filterableKeys = {
   title: 'search',
@@ -63,6 +59,15 @@ type FilterType = {
   key: string
   value: string
 }
+
+const filterOptionsQuery = gql`
+  {
+    reportFilterOptions {
+      key
+      options
+    }
+  }
+`
 
 interface Props {
   reports: Report[]
@@ -103,27 +108,21 @@ class SortAndFilter extends React.Component<Props, any> {
     Report.addReportsFilter() // Add an empty filter
   }
 
-  getFilterOptions = (key: string) => {
-    const { reports = [] } = this.props
-
-    const options = reports
-      .map(report => get(report, key))
-      .filter(optionValue => !!optionValue)
-
-    return uniq(options)
+  getFilterOptions = options => (key: string) => {
+    return get(options.find(opt => opt.key === key), 'options', [])
   }
 
   getFilterKeys = () =>
     Object.keys(filterableKeys)
-      .filter(key => this.getFilterOptions(key).length > 1)
       .map(filterKey => ({
         value: filterKey,
         label: get(filterLabels, filterKey, filterKey),
       }))
 
-  renderFilterItem = (filterItem: { key: string; value: string }, index) => {
+  renderFilterItem = (filterItem: { key: string; value: string }, index, filterOptions) => {
     const { Report } = this.props
     const keyOptions = this.getFilterKeys()
+    const getOptions = this.getFilterOptions(filterOptions)
     const filterType = filterableKeys[filterItem.key]
 
     return (
@@ -134,24 +133,25 @@ class SortAndFilter extends React.Component<Props, any> {
           options={[{ value: '', label: 'Valitse suodatin' }, ...keyOptions]}
           value={filterItem.key}
         />
-        {filterItem.key && (filterType === 'search' ? (
-          <input
-            type="text"
-            value={filterItem.value}
-            onChange={e =>
-              Report.setFilterValues(index, filterItem.key, e.target.value)
-            }
-          />
-        ) : (
-          <Select
-            name={`filter_options_${filterItem.key}_select`}
-            options={this.getFilterOptions(filterItem.key)}
-            value={filterItem.value}
-            onChange={e =>
-              Report.setFilterValues(index, filterItem.key, e.target.value)
-            }
-          />
-        ))}
+        {filterItem.key &&
+          (filterType === 'search' ? (
+            <input
+              type="text"
+              value={filterItem.value}
+              onChange={e =>
+                Report.setFilterValues(index, filterItem.key, e.target.value)
+              }
+            />
+          ) : (
+            <Select
+              name={`filter_options_${filterItem.key}_select`}
+              options={getOptions(filterItem.key)}
+              value={filterItem.value}
+              onChange={e =>
+                Report.setFilterValues(index, filterItem.key, e.target.value)
+              }
+            />
+          ))}
         <button onClick={() => Report.removeFilter(index)}>-</button>
       </FilterItem>
     )
@@ -188,7 +188,13 @@ class SortAndFilter extends React.Component<Props, any> {
           </SortButton>
         </div>
         <div>
-          {filterReports.map(this.renderFilterItem)}
+          <Query query={filterOptionsQuery}>
+            {({ data }) =>
+              filterReports.map((filterItem, idx) =>
+                this.renderFilterItem(filterItem, idx, get(data, 'reportFilterOptions', []))
+              )
+            }
+          </Query>
           <button onClick={() => Report.addReportsFilter()}>Add filter</button>
         </div>
       </div>

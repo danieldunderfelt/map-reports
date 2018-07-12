@@ -11,8 +11,6 @@ import { ManualReportDataInput } from '../../../types/CreateReportData'
 import { Location } from '../../../types/Location'
 
 const filterableKeys = [
-  'title',
-  'message',
   'reporter.id',
   'reporter.type',
   'status',
@@ -131,7 +129,7 @@ const reportResolvers = db => {
       })
     })
 
-    return reports
+    return options
   }
 
   function createReport(
