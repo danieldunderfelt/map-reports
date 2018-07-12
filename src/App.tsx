@@ -44,7 +44,7 @@ type Props = {
   getVariables: ({ state }) => ({
     perPage: 10,
     sort: toJS(state.sortReports),
-    filter: toJS(state.filterReports.filter(f => !!f.key && !!f.value)),
+    filter: toJS(state.filterReports.filter(f => !!f.key)),
   }),
 })
 @observer
