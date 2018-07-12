@@ -76,6 +76,10 @@ injectGlobal`
        margin-left: 1px;
     }
   }
+  
+  .marker-cluster {
+    
+  }
 `
 
 export default ({ focused = false, blurred = false, type }) =>

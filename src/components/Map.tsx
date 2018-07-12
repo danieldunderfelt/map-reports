@@ -6,11 +6,12 @@ import Popup from 'react-leaflet/es/Popup'
 import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
 import { app } from 'mobx-app'
-import { throttle } from 'lodash'
-import { LatLng, latLng, LatLngExpression, LeafletMouseEvent, marker } from 'leaflet'
+import { point, LatLng, latLng, LatLngExpression, LeafletMouseEvent, divIcon} from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
 import 'leaflet/dist/leaflet.css'
+import 'react-leaflet-markercluster/dist/styles.min.css'
+import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { AnyFunction } from '../../types/AnyFunction'
 
 const attribution = `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
@@ -109,22 +110,32 @@ class Map extends React.Component<Props, State> {
           retina="@2x"
           url={url}
         />
-        {markers.length > 0 &&
-          markers.map(
-            ({ type, position, message, id, state: markerState, onClick }) => (
-              <Marker
-                onClick={this.onMarkerClick(onClick)}
-                key={`marker_${id}`}
-                position={position}
-                icon={MarkerIcon({
-                  type,
-                  focused: markerState === MarkerState.focus,
-                  blurred: markerState === MarkerState.inactive,
-                })}>
-                {message && <Popup>{message}</Popup>}
-              </Marker>
-            ),
-          )}
+        {markers.length > 0 && (
+          <MarkerClusterGroup
+            iconCreateFunction={cluster =>
+              divIcon({
+                html: `<span>${cluster.getChildCount()}</span>`,
+                className: 'marker-cluster',
+                iconSize: point(40, 40, true),
+              })
+            }>
+            {markers.map(
+              ({ type, position, message, id, state: markerState, onClick }) => (
+                <Marker
+                  onClick={this.onMarkerClick(onClick)}
+                  key={`marker_${id}`}
+                  position={position}
+                  icon={MarkerIcon({
+                    type,
+                    focused: markerState === MarkerState.focus,
+                    blurred: markerState === MarkerState.inactive,
+                  })}>
+                  {message && <Popup>{message}</Popup>}
+                </Marker>
+              ),
+            )}
+          </MarkerClusterGroup>
+        )}
       </LeafletMap>
     )
   }
