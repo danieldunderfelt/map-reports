@@ -1,4 +1,4 @@
-import { action, extendObservable } from 'mobx'
+import { action, extendObservable, observable } from 'mobx'
 import { ReportActions } from '../../types/ReportActions'
 
 const emptyReport = {

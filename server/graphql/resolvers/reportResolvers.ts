@@ -31,6 +31,7 @@ const reportResolvers = db => {
   const reporterDb = db.table('reporter')
 
   function applyFilters(reportsToFilter, filterRules) {
+    const resolvedReporters = []
     const filterGroups = values(groupBy(filterRules.filter(f => !!f.key), 'key'))
 
     // Include only reports that match all filters
@@ -40,10 +41,24 @@ const reportResolvers = db => {
         // Filters are grouped by key. If there are many keys, treat it as an
         // "or" filter such that the report[key] value matches either filter.
         // A single filter in a group is effectively an "and" filter.
-        filterGroup.some(filter =>
+        filterGroup.some(filter => {
+          let reporter = resolvedReporters.find(rep => rep.id === report.reporter)
+          let reportItem = report
+
+          // If the key starts with 'reporter' and we haven't resolved the reporter yet, do it.
+          if (get(filter, 'key', '').startsWith('reporter') && !reporter) {
+            reporter = reporterDb.get(report.reporter)
+            resolvedReporters.push(reporter) // Add to cache for future iterations
+          }
+
+          // If the key starts with 'reporter', merge the resolved reporter into the report item.
+          if (get(filter, 'key', '').startsWith('reporter')) {
+            reportItem = merge({}, reportItem, { reporter })
+          }
+
           // Use fuzzy search to match the filter value and the report[key] value.
-          fuzzysearch(toLower(filter.value), toLower(get(report, filter.key, '')))
-        )
+          return fuzzysearch(toLower(filter.value), toLower(get(reportItem, filter.key, '')))
+        })
       )
     )
   }
