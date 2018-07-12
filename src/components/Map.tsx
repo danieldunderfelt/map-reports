@@ -6,7 +6,14 @@ import Popup from 'react-leaflet/es/Popup'
 import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
 import { app } from 'mobx-app'
-import { point, LatLng, latLng, LatLngExpression, LeafletMouseEvent, divIcon} from 'leaflet'
+import {
+  point,
+  LatLng,
+  latLng,
+  LatLngExpression,
+  LeafletMouseEvent,
+  divIcon,
+} from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
 import 'leaflet/dist/leaflet.css'
@@ -112,13 +119,16 @@ class Map extends React.Component<Props, State> {
         />
         {markers.length > 0 && (
           <MarkerClusterGroup
-            iconCreateFunction={cluster =>
-              divIcon({
-                html: `<span>${cluster.getChildCount()}</span>`,
+            showCoverageOnHover={false}
+            iconCreateFunction={cluster => {
+              const count = cluster.getChildCount()
+
+              return divIcon({
+                html: `<span class="marker-cluster-icon" style="--count: ${count}">${count}</span>`,
                 className: 'marker-cluster',
                 iconSize: point(40, 40, true),
               })
-            }>
+            }}>
             {markers.map(
               ({ type, position, message, id, state: markerState, onClick }) => (
                 <Marker
@@ -132,7 +142,7 @@ class Map extends React.Component<Props, State> {
                   })}>
                   {message && <Popup>{message}</Popup>}
                 </Marker>
-              ),
+              )
             )}
           </MarkerClusterGroup>
         )}

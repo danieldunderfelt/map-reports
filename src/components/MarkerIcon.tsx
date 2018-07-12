@@ -78,7 +78,21 @@ injectGlobal`
   }
   
   .marker-cluster {
-    
+    border: 0;
+    background: transparent;
+  }
+  
+  .marker-cluster-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    background: var(--blue);
+    width: calc(1.5rem + (var(--count) * 0.25rem));
+    height: calc(1.5rem + (var(--count) * 0.25rem));
+    transform: translate(-50%, -50%);
+    font-size: calc(1rem + (var(--count) * 0.2rem));
   }
 `
 
