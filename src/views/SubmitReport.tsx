@@ -1,19 +1,19 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react'
 import { mutate } from '../helpers/Mutation'
-import { action, observable, toJS } from 'mobx'
+import { action, toJS } from 'mobx'
 import gql from 'graphql-tag'
 import { ReportFragment } from '../fragments/ReportFragment'
 import { AnyFunction } from '../../types/AnyFunction'
-import { reportsQuery } from '../queries/reportsQuery'
-import { updateQuery } from '../helpers/updateQuery'
+import updateReportsConnection from '../helpers/updateReportsConnection'
 import { Report } from '../../types/Report'
 import { RouterType } from 'pathricia'
 import routes from '../routes'
+import { ReportActions } from '../../types/ReportActions'
 
 const createReportMutation = gql`
-  mutation createReport($reportData: CreateReport) {
-    createReport(reportData: $reportData) {
+  mutation createReport($reportData: InputReport!, $location: InputLocation!) {
+    createReport(reportData: $reportData, location: $location) {
       ...ReportFields
     }
   }
@@ -29,14 +29,12 @@ type Props = {
   router?: RouterType
   actions?: {
     Map?: any
-    Report?: {
-      createReport: () => void
-    }
+    Report?: ReportActions
   }
 }
 
-@mutate({ mutation: createReportMutation, update: updateQuery(reportsQuery) })
 @inject('state', 'actions', 'router')
+@mutate({ mutation: createReportMutation, update: updateReportsConnection })
 @observer
 class SubmitReport extends React.Component<Props, any> {
   componentDidMount() {
@@ -46,10 +44,11 @@ class SubmitReport extends React.Component<Props, any> {
   }
 
   pickCurrentLocation = () => {
-    const { Map } = this.props.actions
+    const { Report, Map } = this.props.actions
 
     navigator.geolocation.getCurrentPosition(({ coords }) => {
       Map.setClickedLocation({ lat: coords.latitude, lon: coords.longitude })
+      Report.focusReport('clicked_location')
     })
   }
 
@@ -69,13 +68,9 @@ class SubmitReport extends React.Component<Props, any> {
       variables: {
         reportData: {
           title,
-          message,
-          item: {
-            type: 'general',
-            location,
-          },
-          reporter: 'reporter_0',
+          message
         },
+        location
       },
     })
 

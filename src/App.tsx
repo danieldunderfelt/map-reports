@@ -7,7 +7,6 @@ import Route from './helpers/Route'
 import { Query } from 'react-apollo'
 import { reportsQuery } from './queries/reportsQuery'
 import { get, has } from 'lodash'
-import { Report } from '../types/Report'
 import { RendersReports } from '../types/RendersReports'
 import ReportsMap from './views/ReportsMap'
 import { observer, inject } from 'mobx-react'
@@ -52,14 +51,13 @@ class App extends React.Component<Props, any> {
           }}
           query={reportsQuery}>
           {({ data, fetchMore }) => {
-            const reports = get(data, 'reports.edges', []).map(edge => edge.node)
-
-            const queryName = 'reports'
+            const queryName = 'reportsConnection'
+            const reports = get(data, `${queryName}.edges`, []).map(edge => edge.node)
 
             const paginator =
               has(data, `${queryName}.edges`) && has(data, `${queryName}.pageInfo`)
                 ? createPaginator(data[queryName], queryName, fetchMore)
-                : () => {}
+                : null
 
             return (
               <>

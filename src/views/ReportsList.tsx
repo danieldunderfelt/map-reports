@@ -66,9 +66,11 @@ class ReportsList extends React.Component<Props, any> {
             </p>
           </Report>
         ))}
-        <button onClick={() => fetchMore()}>
-          Fetch more
-        </button>
+        { typeof fetchMore === 'function' && (
+          <button onClick={() => fetchMore()}>
+            Fetch more
+          </button>
+        )}
       </div>
     )
   }

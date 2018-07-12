@@ -1,5 +1,5 @@
-import { ReportInput } from '../../types/CreateReportData'
-import { createReport } from '../createReport'
+import { ReportDataInput } from '../../types/CreateReportData'
+import { createReport } from './createReport'
 import { Location } from '../../types/Location'
 
 /*
@@ -7,14 +7,11 @@ import { Location } from '../../types/Location'
  * Describe the issue further in the message.
  */
 
-const GeneralReport = (reportData: ReportInput, location: Location) => {
-  const report = createReport({
-    ...reportData,
-    item: {
-      type: 'general',
-      location,
-      recommendedMapZoom: 16
-    },
+const GeneralReport = (reportData: ReportDataInput, location: Location) => {
+  const report = createReport(reportData, {
+    type: 'general',
+    location,
+    recommendedMapZoom: 16,
   })
 
   return report

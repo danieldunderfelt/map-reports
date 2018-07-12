@@ -1,11 +1,10 @@
-import { ReportItem } from './Report'
-
-export interface ReportInput {
-  message: string
+export interface ManualReportDataInput {
+  message?: string
   title: string
-  reporter: string
 }
 
-export interface CreateReportData<ItemType = ReportItem> extends ReportInput {
-  item: ItemType
+export interface ReportDataInput {
+  message?: string
+  title: string
+  reporter: string
 }

@@ -15,11 +15,9 @@ export enum ReportPriority {
   CRITICAL = 'CRITICAL',
 }
 
-export type ReportItemType = 'stop' | 'missing' | 'general'
-
 export interface ReportItem {
   location: Location
-  type: ReportItemType
+  type: string
   recommendedMapZoom?: number
 }
 

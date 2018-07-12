@@ -15,7 +15,7 @@ type UnconnectedStop = {
 
 const UnconnectedStopsReporter = (
   reporterConfig: ReporterConfig,
-  publishReport: (report: Report) => void,
+  publishReport: (report: Report) => void
 ): Reporter => {
   const reporterMeta = {
     name: 'Unconnected stops reporter',
@@ -44,15 +44,13 @@ const UnconnectedStopsReporter = (
     }
 
     const unconnectedStopsData: UnconnectedStop[] = await neatCsv(lastFetchedCsv)
-    unconnectedStopsData
-      .slice(0, 100)
-      .forEach(stop => createReport(stop))
+    unconnectedStopsData.forEach(stop => createReport(stop))
   }
 
   function createReport(stop: UnconnectedStop) {
     const report = StopReport(
       {
-        title: 'Unconnected stop',
+        title: `Unconnected stop ${stop.stop_code}`,
         message: `JORE stop ${stop.stop_code} is not connected to an OSM stop.`,
         reporter: reporterConfig.id,
       },
@@ -61,8 +59,8 @@ const UnconnectedStopsReporter = (
         location: {
           lat: parseFloat(stop.jore_lat),
           lon: parseFloat(stop.jore_lon),
-        }
-      },
+        },
+      }
     )
 
     publishReport(report)

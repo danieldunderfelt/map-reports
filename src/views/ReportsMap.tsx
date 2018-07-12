@@ -58,6 +58,7 @@ export default inject(app('Report'))(
         type: 'new-report',
         state: MarkerState.focus,
         id: 'clicked_location',
+        zoom: 16,
         position: latLng(
           state.lastClickedLocation.lat,
           state.lastClickedLocation.lon,
@@ -70,11 +71,7 @@ export default inject(app('Report'))(
       <MapContainer>
         <Map
           focusedMarker={state.focusedReport}
-          onMapClick={() => {
-            if (state.mapMode !== MapModes.pick) {
-              Report.focusReport(null)
-            }
-          }}
+          onMapClick={() => Report.focusReport(null)}
           markers={markers}
         />
       </MapContainer>

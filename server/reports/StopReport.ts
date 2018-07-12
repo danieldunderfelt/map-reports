@@ -1,5 +1,5 @@
-import { createReport } from '../createReport'
-import { ReportInput } from '../../types/CreateReportData'
+import { createReport } from './createReport'
+import { ReportDataInput } from '../../types/CreateReportData'
 import { StopItem } from '../../types/Report'
 import { Location } from '../../types/Location'
 
@@ -14,14 +14,11 @@ type ReportedStop = {
  * is where the stop should be on the map.
  */
 
-const StopReport = (reportData: ReportInput, stop : ReportedStop) => {
-  const report = createReport<StopItem>({
-    ...reportData,
-    item: {
-      type: 'stop',
-      recommendedMapZoom: 18,
-      ...stop
-    },
+const StopReport = (reportData: ReportDataInput, stop: ReportedStop) => {
+  const report = createReport<StopItem>(reportData, {
+    type: 'stop',
+    recommendedMapZoom: 18,
+    ...stop,
   })
 
   return report
