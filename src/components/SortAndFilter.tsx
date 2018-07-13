@@ -8,7 +8,7 @@ import Select from '../helpers/Select'
 import { ReportActions } from '../../types/ReportActions'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
-import { Button, TextField} from '@material-ui/core'
+import { Button, TextField, Paper} from '@material-ui/core'
 import { Delete } from '@material-ui/icons'
 
 const Wrapper = styled.div`
@@ -34,7 +34,7 @@ const SortOptions = styled.div`
 
 const SortButton = styled(Button)``
 
-const FilterItem = styled.div`
+const FilterItem = styled(Paper)`
   display: grid;
   grid-template-columns: 10rem 1fr 3rem;
   grid-gap: 0.5rem;
