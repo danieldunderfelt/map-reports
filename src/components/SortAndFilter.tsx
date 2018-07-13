@@ -60,7 +60,7 @@ type FilterType = {
   value: string
 }
 
-const filterOptionsQuery = gql`
+export const filterOptionsQuery = gql`
   {
     reportFilterOptions {
       key
@@ -101,11 +101,6 @@ class SortAndFilter extends React.Component<Props, any> {
       state: { sortReports },
     } = this.props
     Report.sortReports(sortReports.key, setDirection)
-  }
-
-  addFilter = () => {
-    const { Report } = this.props
-    Report.addReportsFilter() // Add an empty filter
   }
 
   getFilterOptions = options => (key: string) => {

@@ -2,6 +2,7 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 import { Report, ReportStatus as ReportStatusEnum } from '../../types/Report'
+import { filterOptionsQuery } from './SortAndFilter'
 
 type Props = {
   report: Report
@@ -23,11 +24,11 @@ class ReportStatus extends React.Component<Props, any> {
     const { report, readOnly = true } = this.props
 
     return readOnly ? (
-      <>
-        Status: {report.status}
-      </>
+      <>Status: {report.status}</>
     ) : (
-      <Mutation mutation={setStatusMutation}>
+      <Mutation
+        mutation={setStatusMutation}
+        refetchQueries={() => [{ query: filterOptionsQuery }]}>
         {mutate => (
           <>
             Status:{' '}

@@ -12,7 +12,7 @@ import {
   latLng,
   LatLngExpression,
   LeafletMouseEvent,
-  divIcon,
+  divIcon, latLngBounds,
 } from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
@@ -39,21 +39,37 @@ interface Props {
   }
 }
 
-interface State {
-  center: LatLng
-  zoom: number
-}
-
 const defaultMapLocation: LatLng = latLng(60.1689784, 24.9230033)
 const defaultMapZoom = 13
 
 let center = defaultMapLocation
 let zoom = defaultMapZoom
+let bounds
 
 @inject(app('Map'))
 @observer
-class Map extends React.Component<Props, State> {
+class Map extends React.Component<Props, any> {
   mapRef = React.createRef()
+
+  componentWillUpdate({ markers }) {
+    bounds = this.calculateMarkerBounds(markers)
+  }
+
+  calculateMarkerBounds = (markers) => {
+    let latMin = defaultMapLocation.lat
+    let lngMin = defaultMapLocation.lng
+    let latMax = latMin
+    let lngMax = lngMin
+
+    markers.forEach(marker => {
+      latMin = Math.min(latMin, marker.position.lat)
+      lngMin = Math.min(lngMin, marker.position.lng)
+      latMax = Math.max(latMax, marker.position.lat)
+      lngMax = Math.max(lngMax, marker.position.lng)
+    })
+
+    return latLngBounds([[ latMin, lngMin ], [ latMax, lngMax ]])
+  }
 
   // Get the position for the currently focused marker or return
   // the default center and zoom values if no marker is focused.
@@ -104,6 +120,7 @@ class Map extends React.Component<Props, State> {
     return (
       <LeafletMap
         onViewportChange={this.trackViewport}
+        bounds={bounds}
         onClick={this.onMapClick}
         center={mapCenter}
         zoom={mapZoom}

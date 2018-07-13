@@ -3,7 +3,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html",
     "server": "ts-node server/server.ts",
-    "server:dev": "nodemon --delay 3 --signal SIGTERM --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
+    "server:dev": "nodemon --delay 1 --signal SIGTERM --watch 'server/**/*' --exec 'ts-node --project tsconfig.server.json' server/server.ts"
   },
   "dependencies": {
     "@types/classnames": "^2.2.4",

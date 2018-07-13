@@ -42,6 +42,9 @@ injectGlobal`
       height: 1.5rem;
       background: var(--blue);
       border-radius: 50% 50% 0 50%;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      outline: 0;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5);
       transform: rotate(45deg) translateX(-50%);
     }
    
@@ -66,7 +69,7 @@ injectGlobal`
     }
     
     &.type_new-report:after {
-      background: lightgreen;
+      background: #7bc11d;
     }
   }
   

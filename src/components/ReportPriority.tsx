@@ -2,6 +2,7 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 import { Report, ReportPriority as ReportPriorityEnum } from '../../types/Report'
+import { filterOptionsQuery } from './SortAndFilter'
 
 type Props = {
   report: Report
@@ -23,11 +24,11 @@ class ReportPriority extends React.Component<Props, any> {
     const { report, readOnly = true } = this.props
 
     return readOnly ? (
-      <>
-        Priority: { report.priority }
-      </>
-      ) : (
-      <Mutation mutation={setPriorityMutation}>
+      <>Priority: {report.priority}</>
+    ) : (
+      <Mutation
+        mutation={setPriorityMutation}
+        refetchQueries={() => [{ query: filterOptionsQuery }]}>
         {mutate => (
           <>
             Priority:{' '}
