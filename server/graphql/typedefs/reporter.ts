@@ -5,6 +5,7 @@ const reporterTypeDefs = gql`
     id: ID!
     name: String!
     type: String!
+    dataset: String
   }
 `
 

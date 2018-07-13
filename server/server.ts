@@ -7,7 +7,6 @@ import createServer from './graphql/schema'
  */
 
 const db = database()
-const reportsTable = db.table('report')
 
 /**
  * Set up reporters
@@ -19,10 +18,8 @@ const stopsReporter = UnconnectedStopsReporter(
     id: 'reporter_1',
     type: 'automatic',
   },
-  reportsTable.add,
+  db,
 )
-
-db.table('reporter').add(stopsReporter.meta)
 
 /**
  * Run reporters

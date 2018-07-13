@@ -1,6 +1,11 @@
 import { gql } from 'apollo-server'
 
 const rootTypeDefs = gql`
+  type Dataset {
+    id: String!
+    geoJSON: String!
+  }
+
   type Query {
     reports: [Report]
     reportFilterOptions: [ReportFilterOptions]
@@ -11,6 +16,7 @@ const rootTypeDefs = gql`
       filter: [FilterParams]
     ): ReportsConnection
     reporters: [Reporter]
+    datasets: [Dataset]
   }
 
   type Mutation {

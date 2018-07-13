@@ -8,7 +8,9 @@ import { ReportActions } from '../../types/ReportActions'
 import styled from 'styled-components'
 import Report from './Report'
 
-const List = styled.div``
+const List = styled.div`
+  width: 100%;
+`
 
 interface Props extends RendersReports {
   state?: {

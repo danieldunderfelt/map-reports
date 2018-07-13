@@ -6,11 +6,11 @@ import ReportsMap from '../components/ReportsMap'
 const CreateReportView = styled.div`
   height: 100%;
   display: grid;
-  grid-template-columns: 30rem 1fr;
+  grid-template-columns: 25rem 1fr;
 `
 
 const Sidebar = styled.div`
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 3rem);
   overflow: auto;
   display: flex;
 `

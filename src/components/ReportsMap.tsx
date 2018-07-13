@@ -10,17 +10,6 @@ import { Marker, MarkerState } from '../../types/Marker'
 import { ReportActions } from '../../types/ReportActions'
 import { LatLng, latLng } from 'leaflet'
 
-const MapContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-
-  > * {
-    width: 100%;
-    height: 100%;
-  }
-`
-
 interface Props extends RendersReports {
   state?: any
   Report?: ReportActions
@@ -69,14 +58,12 @@ export default inject(app('Report'))(
     }
 
     return (
-      <MapContainer>
-        <Map
-          useBounds={useBounds}
-          focusedMarker={state.focusedReport}
-          onMapClick={() => Report.focusReport(null)}
-          markers={markers}
-        />
-      </MapContainer>
+      <Map
+        useBounds={useBounds}
+        focusedMarker={state.focusedReport}
+        onMapClick={() => Report.focusReport(null)}
+        markers={markers}
+      />
     )
   }),
 )

@@ -11,6 +11,7 @@ export interface ReporterMeta {
   id: string
   name: string
   type: string
+  dataset?: string
 }
 
 export interface Reporter {

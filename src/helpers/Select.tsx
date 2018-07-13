@@ -15,8 +15,6 @@ export default ({ className = '', name = '', value, onChange, options }) => (
     {options.map(option => {
       const { value = option, label = option } = option
 
-      console.log(value)
-
       return (
         <option value={value} key={`select_${name}_${value}`}>
           {label}

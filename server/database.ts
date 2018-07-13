@@ -1,10 +1,18 @@
 import { Report } from '../types/Report'
 import { ReporterMeta } from '../types/Reporter'
-import { get, merge } from 'lodash'
+import { get as _get, merge } from 'lodash'
+import { Dataset } from '../types/Dataset'
 
-const createDb = (collection: any[], name = 'Item') => {
+interface RecordTypeContract {
+  id: string
+}
+
+function createDb<RecordType extends RecordTypeContract>(
+  collection: RecordType[],
+  name = 'Item'
+) {
   function get(id: string = null) {
-    if(id) {
+    if (id) {
       return collection.find(item => item.id === id)
     }
 
@@ -12,7 +20,14 @@ const createDb = (collection: any[], name = 'Item') => {
   }
 
   function add(item) {
+    if (get(_get(item, 'id'))) {
+      throw new Error(
+        `An item with id ${_get(item, 'id')} already exists in ${name} table.`
+      )
+    }
+
     collection.push(item)
+    return item
   }
 
   function update(id, newValues) {
@@ -25,16 +40,27 @@ const createDb = (collection: any[], name = 'Item') => {
     return merge(item, newValues)
   }
 
+  function updateOrAdd(id, item) {
+    const dbItem = get(id)
+
+    if (!dbItem) {
+      return add(item)
+    }
+
+    return merge(dbItem, item)
+  }
+
   return {
     get,
     add,
-    update
+    update,
+    updateOrAdd,
   }
 }
 
 const reportsDb = () => {
   const reports: Report[] = []
-  return createDb(reports, 'Report')
+  return createDb<Report>(reports, 'Report')
 }
 
 const reportersDb = () => {
@@ -46,21 +72,34 @@ const reportersDb = () => {
     },
   ]
 
-  return createDb(reporters, 'Reporter')
+  return createDb<ReporterMeta>(reporters, 'Reporter')
+}
+
+const datasetsDb = () => {
+  const datasets: Dataset[] = []
+  return createDb(datasets, 'Dataset')
 }
 
 const database = () => {
   const tables = {
     report: reportsDb(),
     reporter: reportersDb(),
+    datasets: datasetsDb(),
   }
 
   function table(tableName) {
-    return get(tables, tableName)
+    return _get(tables, tableName)
+  }
+
+  function ensureTable<RecordType extends RecordTypeContract>(tableName, itemName) {
+    if (tableName in tables === false) {
+      tables[tableName] = createDb<RecordType>([], itemName)
+    }
   }
 
   return {
-    table
+    table,
+    ensureTable,
   }
 }
 

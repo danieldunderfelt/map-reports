@@ -1,10 +1,9 @@
 import { DateTime } from 'luxon'
 import got from 'got'
 import neatCsv from 'neat-csv'
-import { uniqBy } from 'lodash'
 import StopReport from '../reports/StopReport'
 import { Reporter, ReporterConfig } from '../../types/Reporter'
-import { Report } from '../../types/Report'
+import GeoJSON from 'geojson'
 
 type UnconnectedStop = {
   stop_code: string
@@ -15,18 +14,21 @@ type UnconnectedStop = {
 
 const UnconnectedStopsReporter = (
   reporterConfig: ReporterConfig,
-  publishReport: (report: Report) => void
+  database: any
 ): Reporter => {
   const reporterMeta = {
     name: 'Unconnected stops reporter',
     type: 'automatic',
+    dataset: 'unconnected_stops',
     ...reporterConfig,
   }
+
+  database.table('reporter').add(reporterMeta)
 
   const csvUrl = 'http://api.digitransit.fi/routing-data/v2/hsl/unconnected.csv'
   const cron = '* 7 * * *' // at 7am every day
   let lastFetchedCsv = ''
-  let lastFetchedAt: null | DateTime = null
+  let lastFetchedAt: DateTime = null
 
   function schedule(scheduler) {
     return scheduler(cron, () => run())
@@ -44,7 +46,18 @@ const UnconnectedStopsReporter = (
     }
 
     const unconnectedStopsData: UnconnectedStop[] = await neatCsv(lastFetchedCsv)
-    unconnectedStopsData.forEach(stop => createReport(stop))
+
+    const stopsGeoJSON = GeoJSON.parse(unconnectedStopsData, {
+      Point: ['jore_lat', 'jore_lon'],
+      include: ['stop_code'],
+    })
+
+    const datasetsTable = database.table('datasets')
+
+    datasetsTable.updateOrAdd(reporterMeta.dataset, {
+      id: reporterMeta.dataset,
+      geoJSON: JSON.stringify(stopsGeoJSON),
+    })
   }
 
   function createReport(stop: UnconnectedStop) {
@@ -63,7 +76,8 @@ const UnconnectedStopsReporter = (
       }
     )
 
-    publishReport(report)
+    const reportsTable = database.table('report')
+    reportsTable.add(report)
   }
 
   return {

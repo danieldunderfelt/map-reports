@@ -195,6 +195,10 @@
   version "3.0.32"
   resolved "https://registry.yarnpkg.com/@types/long/-/long-3.0.32.tgz#f4e5af31e9e9b196d8e5fca8a5e2e20aa3d60b69"
 
+"@types/luxon@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-1.2.1.tgz#83c93c5602bc8004aef372a84a102519f95023b3"
+
 "@types/mime@*":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
@@ -2791,6 +2795,10 @@ generate-object-property@^1.0.0:
 generate-random-points@^0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/generate-random-points/-/generate-random-points-0.0.0.tgz#74d78fc42ca22e0dc2e6259a6e38b311c4511aaa"
+
+geojson@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
 
 get-port@^3.2.0:
   version "3.2.0"

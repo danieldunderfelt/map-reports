@@ -21,6 +21,7 @@ import 'leaflet/dist/leaflet.css'
 import 'react-leaflet-markercluster/dist/styles.min.css'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { AnyFunction } from '../../types/AnyFunction'
+import styled from 'styled-components'
 
 const attribution = `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
@@ -34,12 +35,24 @@ interface Props {
   markers: Marker[]
   onMapClick: AnyFunction
   focusedMarker?: string
+  geoJSON?: any[]
   Map?: {
     setClickedLocation: (location: Location) => void
     setMapLocation: (location: LatLngExpression) => void
     setMapZoom: (zoom: number) => void
   }
 }
+
+const MapContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  > * {
+    width: 100%;
+    height: 100%;
+  }
+`
 
 const defaultMapLocation: LatLng = latLng(60.1689784, 24.9230033)
 const defaultMapZoom = 13
@@ -123,52 +136,54 @@ class Map extends React.Component<Props, any> {
     const { center: mapCenter, zoom: mapZoom } = this.getFocusedPosition()
 
     return (
-      <LeafletMap
-        onViewportChange={this.trackViewport}
-        bounds={bounds}
-        onClick={this.onMapClick}
-        center={mapCenter}
-        zoom={mapZoom}
-        ref={this.mapRef}
-        minZoom={10}
-        maxZoom={18}>
-        <TileLayer
-          zoomOffset={-1}
-          tileSize={512}
-          attribution={attribution}
-          retina="@2x"
-          url={url}
-        />
-        {markers.length > 0 && (
-          <MarkerClusterGroup
-            showCoverageOnHover={false}
-            iconCreateFunction={cluster => {
-              const count = cluster.getChildCount()
+      <MapContainer>
+        <LeafletMap
+          onViewportChange={this.trackViewport}
+          bounds={bounds}
+          onClick={this.onMapClick}
+          center={mapCenter}
+          zoom={mapZoom}
+          ref={this.mapRef}
+          minZoom={10}
+          maxZoom={18}>
+          <TileLayer
+            zoomOffset={-1}
+            tileSize={512}
+            attribution={attribution}
+            retina="@2x"
+            url={url}
+          />
+          {markers.length > 0 && (
+            <MarkerClusterGroup
+              showCoverageOnHover={false}
+              iconCreateFunction={cluster => {
+                const count = cluster.getChildCount()
 
-              return divIcon({
-                html: `<span class="marker-cluster-icon" style="--count: ${count}">${count}</span>`,
-                className: 'marker-cluster',
-                iconSize: point(40, 40, true),
-              })
-            }}>
-            {markers.map(
-              ({ type, position, message, id, state: markerState, onClick }) => (
-                <Marker
-                  onClick={this.onMarkerClick(onClick)}
-                  key={`marker_${id}`}
-                  position={position}
-                  icon={MarkerIcon({
-                    type,
-                    focused: markerState === MarkerState.focus,
-                    blurred: markerState === MarkerState.inactive,
-                  })}>
-                  {message && <Popup>{message}</Popup>}
-                </Marker>
-              )
-            )}
-          </MarkerClusterGroup>
-        )}
-      </LeafletMap>
+                return divIcon({
+                  html: `<span class="marker-cluster-icon" style="--count: ${count}">${count}</span>`,
+                  className: 'marker-cluster',
+                  iconSize: point(40, 40, true),
+                })
+              }}>
+              {markers.map(
+                ({ type, position, message, id, state: markerState, onClick }) => (
+                  <Marker
+                    onClick={this.onMarkerClick(onClick)}
+                    key={`marker_${id}`}
+                    position={position}
+                    icon={MarkerIcon({
+                      type,
+                      focused: markerState === MarkerState.focus,
+                      blurred: markerState === MarkerState.inactive,
+                    })}>
+                    {message && <Popup>{message}</Popup>}
+                  </Marker>
+                )
+              )}
+            </MarkerClusterGroup>
+          )}
+        </LeafletMap>
+      </MapContainer>
     )
   }
 }
