@@ -4,14 +4,13 @@ import { AnyFunction } from '../../types/AnyFunction'
 import styled from 'styled-components'
 
 type Props = {
+  className?: string
   router?: {
     go: AnyFunction
   }
 }
 
-const Menu = styled.nav`
-  margin-bottom: 2rem;
-`
+const Menu = styled.nav``
 
 @inject('router')
 @observer
@@ -23,8 +22,10 @@ class Nav extends React.Component<Props, any> {
   }
 
   render() {
+    const { className } = this.props
+
     return (
-      <Menu>
+      <Menu className={className}>
         <a onClick={this.goTo('/')} href="/">
           Dashboard
         </a>{' '}

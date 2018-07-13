@@ -2,7 +2,7 @@ import { css } from 'styled-components'
 
 const color = css`
   :root {
-    --blue: #55aaff;
+    --blue: #0077C7;
   }
 `
 

@@ -29,7 +29,7 @@ interface Props extends RendersReports {
 @observer
 class ReportsList extends React.Component<Props, any> {
   render() {
-    const { reports, Report: ReportStore, fetchMore } = this.props
+    const { reports = [], Report: ReportStore, fetchMore } = this.props
 
     return (
       <List>

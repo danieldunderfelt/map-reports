@@ -8,26 +8,20 @@ import Select from '../helpers/Select'
 import { ReportActions } from '../../types/ReportActions'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
-import { filter } from 'async'
+import { Button } from '@material-ui/core'
 
-const SortButton = styled.button<{ active: boolean }>`
-  background: 0;
-  border: 0;
-  padding: 0;
-  color: blue;
-  cursor: pointer;
+const SortButton = styled(Button)`
   width: 4.5rem;
   text-align: center;
   outline: 0;
-  font-weight: ${({ active = false }) => (active ? 'bold' : 'normal')};
 `
 
 const FilterItem = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 1rem;
-  margin: 0.5rem;
+  margin: 0.5rem 0;
   border: 1px solid #eee;
 `
 
@@ -108,13 +102,16 @@ class SortAndFilter extends React.Component<Props, any> {
   }
 
   getFilterKeys = () =>
-    Object.keys(filterableKeys)
-      .map(filterKey => ({
-        value: filterKey,
-        label: get(filterLabels, filterKey, filterKey),
-      }))
+    Object.keys(filterableKeys).map(filterKey => ({
+      value: filterKey,
+      label: get(filterLabels, filterKey, filterKey),
+    }))
 
-  renderFilterItem = (filterItem: { key: string; value: string }, index, filterOptions) => {
+  renderFilterItem = (
+    filterItem: { key: string; value: string },
+    index,
+    filterOptions
+  ) => {
     const { Report } = this.props
     const keyOptions = this.getFilterKeys()
     const getOptions = this.getFilterOptions(filterOptions)
@@ -169,14 +166,13 @@ class SortAndFilter extends React.Component<Props, any> {
             value={sortReports.key}
           />
           <SortButton
-            active={sortReports.direction === 'asc'}
+            variant={sortReports.direction === 'asc' ? 'outlined' : 'text'}
             type="button"
             onClick={this.onChangeSortDirection('asc')}>
             {get(filterLabels, 'asc', 'asc')}
           </SortButton>{' '}
-          /{' '}
           <SortButton
-            active={sortReports.direction === 'desc'}
+            variant={sortReports.direction === 'desc' ? 'outlined' : 'text'}
             type="button"
             onClick={this.onChangeSortDirection('desc')}>
             {get(filterLabels, 'desc', 'desc')}
@@ -186,7 +182,11 @@ class SortAndFilter extends React.Component<Props, any> {
           <Query query={filterOptionsQuery}>
             {({ data }) =>
               filterReports.map((filterItem, idx) =>
-                this.renderFilterItem(filterItem, idx, get(data, 'reportFilterOptions', []))
+                this.renderFilterItem(
+                  filterItem,
+                  idx,
+                  get(data, 'reportFilterOptions', [])
+                )
               )
             }
           </Query>

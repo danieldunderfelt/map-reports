@@ -1,15 +1,21 @@
 import * as React from 'react'
+import { Select, MenuItem } from '@material-ui/core'
 
 export default ({ className = '', name = '', value, onChange, options }) => (
-  <select name={name} className={className} value={value} onChange={onChange}>
+  <Select
+    autoWidth={true}
+    name={name}
+    className={className}
+    value={value}
+    onChange={onChange}>
     {options.map(option => {
       const { value = option, label = option } = option
 
       return (
-        <option value={value} key={`select_${name}_${value}`}>
+        <MenuItem value={value} key={`select_${name}_${value}`}>
           {label}
-        </option>
+        </MenuItem>
       )
     })}
-  </select>
+  </Select>
 )
