@@ -2,6 +2,7 @@ import * as React from 'react'
 import LeafletMap from 'react-leaflet/es/Map'
 import TileLayer from 'react-leaflet/es/TileLayer'
 import Marker from 'react-leaflet/es/Marker'
+import GeoJSON from 'react-leaflet/es/GeoJSON'
 import Popup from 'react-leaflet/es/Popup'
 import { observer, inject } from 'mobx-react'
 import MarkerIcon from './MarkerIcon'
@@ -13,15 +14,16 @@ import {
   LatLngExpression,
   LeafletMouseEvent,
   divIcon,
+  marker,
   latLngBounds,
+  popup,
 } from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
 import 'leaflet/dist/leaflet.css'
-import 'react-leaflet-markercluster/dist/styles.min.css'
-import MarkerClusterGroup from 'react-leaflet-markercluster'
 import { AnyFunction } from '../../types/AnyFunction'
 import styled from 'styled-components'
+import MarkerClusterGroup from './MarkerClusterGroup'
 
 const attribution = `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,
 <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
@@ -32,10 +34,11 @@ const url =
 
 interface Props {
   useBounds?: boolean
-  markers: Marker[]
-  onMapClick: AnyFunction
+  markers?: Marker[]
+  onMapClick?: AnyFunction
   focusedMarker?: string
-  geoJSON?: any[]
+  geoJSON?: any
+  getMarkerMessage?: AnyFunction
   Map?: {
     setClickedLocation: (location: Location) => void
     setMapLocation: (location: LatLngExpression) => void
@@ -66,8 +69,8 @@ let bounds
 class Map extends React.Component<Props, any> {
   mapRef = React.createRef()
 
-  componentWillUpdate({ markers, useBounds = true }) {
-    bounds = useBounds ? this.calculateMarkerBounds(markers) : undefined
+  componentWillUpdate({ markers, geoJSON, useBounds = true }: Props) {
+    bounds = useBounds && markers ? this.calculateMarkerBounds(markers) : undefined
   }
 
   calculateMarkerBounds = markers => {
@@ -118,7 +121,7 @@ class Map extends React.Component<Props, any> {
   }
 
   onMapClick = (event: LeafletMouseEvent) => {
-    const { Map: MapStore, onMapClick } = this.props
+    const { Map: MapStore, onMapClick = () => {} } = this.props
     const { lat, lng } = event.latlng
 
     MapStore.setClickedLocation({ lat, lon: lng })
@@ -131,8 +134,14 @@ class Map extends React.Component<Props, any> {
     zoom = viewportZoom
   }
 
+  defaultMarkerMessage = ({ message }) => message
+
   render() {
-    const { markers = [] } = this.props
+    const {
+      markers = [],
+      geoJSON,
+      getMarkerMessage = this.defaultMarkerMessage,
+    } = this.props
     const { center: mapCenter, zoom: mapZoom } = this.getFocusedPosition()
 
     return (
@@ -153,18 +162,22 @@ class Map extends React.Component<Props, any> {
             retina="@2x"
             url={url}
           />
-          {markers.length > 0 && (
-            <MarkerClusterGroup
-              showCoverageOnHover={false}
-              iconCreateFunction={cluster => {
-                const count = cluster.getChildCount()
+          {geoJSON && (
+            <MarkerClusterGroup>
+              <GeoJSON
+                data={geoJSON}
+                pointToLayer={(geoJsonPoint, latlng) => {
+                  const bubble = popup().setContent(getMarkerMessage(geoJsonPoint))
 
-                return divIcon({
-                  html: `<span class="marker-cluster-icon" style="--count: ${count}">${count}</span>`,
-                  className: 'marker-cluster',
-                  iconSize: point(40, 40, true),
-                })
-              }}>
+                  return marker(latlng, {
+                    icon: MarkerIcon({ type: 'general' }),
+                  }).bindPopup(bubble)
+                }}
+              />
+            </MarkerClusterGroup>
+          )}
+          {markers.length > 0 && (
+            <MarkerClusterGroup>
               {markers.map(
                 ({ type, position, message, id, state: markerState, onClick }) => (
                   <Marker

@@ -56,6 +56,7 @@ const UnconnectedStopsReporter = (
 
     datasetsTable.updateOrAdd(reporterMeta.dataset, {
       id: reporterMeta.dataset,
+      label: 'Unconnected stops',
       geoJSON: JSON.stringify(stopsGeoJSON),
     })
   }

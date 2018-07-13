@@ -95,7 +95,7 @@ injectGlobal`
     width: calc(1.5rem + (var(--count) * 0.25rem));
     height: calc(1.5rem + (var(--count) * 0.25rem));
     transform: translate(-50%, -50%);
-    font-size: calc(1rem + (var(--count) * 0.2rem));
+    font-size: calc(1rem + (var(--count) * 0.1rem));
   }
 `
 

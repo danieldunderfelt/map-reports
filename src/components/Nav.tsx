@@ -1,40 +1,40 @@
 import * as React from 'react'
 import { inject, observer } from 'mobx-react'
-import { AnyFunction } from '../../types/AnyFunction'
-import styled from 'styled-components'
+import { query } from '../helpers/Query'
+import gql from 'graphql-tag'
+import { Tabs, Tab } from '@material-ui/core'
+import routes from '../routes'
+import { compose } from 'react-apollo'
 
-type Props = {
-  className?: string
-  router?: {
-    go: AnyFunction
+const datasetsTabsQuery = gql`
+  {
+    datasets {
+      id
+      label
+    }
   }
-}
+`
 
-const Menu = styled.nav``
+const enhance = compose(
+  inject('state', 'router'),
+  query({ query: datasetsTabsQuery, fetchPolicy: 'cache-first' }),
+  observer
+)
 
-@inject('router')
-@observer
-class Nav extends React.Component<Props, any> {
-  goTo = route => e => {
-    e.preventDefault()
-    const { router } = this.props
-    router.go(route)
+const Nav = enhance(({ queryData, loading, state, router }) => {
+  if (loading) {
+    return []
   }
 
-  render() {
-    const { className } = this.props
-
-    return (
-      <Menu className={className}>
-        <a onClick={this.goTo('/')} href="/">
-          Dashboard
-        </a>{' '}
-        <a onClick={this.goTo('/create-report')} href="/create-report">
-          Create report
-        </a>
-      </Menu>
-    )
-  }
-}
+  return (
+    <Tabs value={state.route} onChange={(e, route) => router.go(route)}>
+      <Tab value={routes.REPORTS} label="Dashboard" />
+      <Tab value={routes.CREATE_REPORT} label="Create report" />
+      {queryData.datasets.map(({ id, label }) => (
+        <Tab key={`dataset_tab_${id}`} value={`/${id}`} label={label} />
+      ))}
+    </Tabs>
+  )
+})
 
 export default Nav

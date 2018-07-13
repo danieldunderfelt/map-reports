@@ -4,6 +4,7 @@ const rootTypeDefs = gql`
   type Dataset {
     id: String!
     geoJSON: String!
+    label: String!
   }
 
   type Query {

@@ -55,6 +55,7 @@ export const Query = observer(
           return (
             <Component
               {...rest}
+              loading={loading}
               startPolling={startPolling}
               stopPolling={stopPolling}
               apolloClient={client}
