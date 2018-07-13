@@ -91,9 +91,12 @@ class Map extends React.Component<Props, any> {
 
     const { zoom: markerZoom = 16, position } = marker
 
+    center = position
+    zoom = markerZoom
+
     return {
-      center: position,
-      zoom: markerZoom,
+      center,
+      zoom,
     }
   }
 

@@ -73,11 +73,7 @@ export default inject(app('Report'))(
         <Map
           useBounds={useBounds}
           focusedMarker={state.focusedReport}
-          onMapClick={() => {
-            if(state.focusedReport !== 'clicked_location') {
-              Report.focusReport(null)
-            }
-          }}
+          onMapClick={() => Report.focusReport(null)}
           markers={markers}
         />
       </MapContainer>

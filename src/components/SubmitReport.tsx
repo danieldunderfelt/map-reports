@@ -57,11 +57,13 @@ class SubmitReport extends React.Component<Props, any> {
   componentDidMount() {
     const { Report, Map } = this.props.actions
     Report.createReport()
+    Report.focusReport('clicked_location')
     Map.setClickedLocation(null)
   }
 
   pickCurrentLocation = () => {
     const { Report, Map } = this.props.actions
+    Report.focusReport(null)
 
     navigator.geolocation.getCurrentPosition(({ coords }) => {
       Map.setClickedLocation({ lat: coords.latitude, lon: coords.longitude })
