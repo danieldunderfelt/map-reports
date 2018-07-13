@@ -12,7 +12,8 @@ import {
   latLng,
   LatLngExpression,
   LeafletMouseEvent,
-  divIcon, latLngBounds,
+  divIcon,
+  latLngBounds,
 } from 'leaflet'
 import { Location } from '../../types/Location'
 import { MarkerState } from '../../types/Marker'
@@ -29,6 +30,7 @@ const url =
   'https://digitransit-dev-cdn-origin.azureedge.net/map/v1/hsl-map/{z}/{x}/{y}{retina}.png'
 
 interface Props {
+  useBounds?: boolean
   markers: Marker[]
   onMapClick: AnyFunction
   focusedMarker?: string
@@ -51,11 +53,11 @@ let bounds
 class Map extends React.Component<Props, any> {
   mapRef = React.createRef()
 
-  componentWillUpdate({ markers }) {
-    bounds = this.calculateMarkerBounds(markers)
+  componentWillUpdate({ markers, useBounds = true }) {
+    bounds = useBounds ? this.calculateMarkerBounds(markers) : undefined
   }
 
-  calculateMarkerBounds = (markers) => {
+  calculateMarkerBounds = markers => {
     let latMin = defaultMapLocation.lat
     let lngMin = defaultMapLocation.lng
     let latMax = latMin
@@ -68,7 +70,7 @@ class Map extends React.Component<Props, any> {
       lngMax = Math.max(lngMax, marker.position.lng)
     })
 
-    return latLngBounds([[ latMin, lngMin ], [ latMax, lngMax ]])
+    return latLngBounds([[latMin, lngMin], [latMax, lngMax]])
   }
 
   // Get the position for the currently focused marker or return

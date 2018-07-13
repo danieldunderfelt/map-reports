@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { observer, inject } from 'mobx-react'
 import { RendersReports } from '../../types/RendersReports'
-import SortAndFilter from '../components/SortAndFilter'
+import SortAndFilter from './SortAndFilter'
 import { app } from 'mobx-app'
 import { Report as ReportType } from '../../types/Report'
 import { ReportActions } from '../../types/ReportActions'
 import styled from 'styled-components'
-import Report from '../components/Report'
+import Report from './Report'
 
 const List = styled.div``
 

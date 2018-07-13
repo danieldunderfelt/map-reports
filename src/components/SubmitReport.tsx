@@ -10,6 +10,8 @@ import { Report } from '../../types/Report'
 import { RouterType } from 'pathricia'
 import routes from '../routes'
 import { ReportActions } from '../../types/ReportActions'
+import { Button, TextField, Divider, Typography} from '@material-ui/core'
+import styled from 'styled-components'
 
 const createReportMutation = gql`
   mutation createReport($reportData: InputReport!, $location: InputLocation!) {
@@ -32,6 +34,21 @@ type Props = {
     Report?: ReportActions
   }
 }
+
+const CreateReportForm = styled.form`
+  width: 100%;
+  padding: 1rem;
+`
+
+const FormGroup = styled.div`
+  margin: 1rem 0;
+`
+
+const Input = styled(TextField)``
+
+const LocationDisplay = styled.div`
+  margin-bottom: 1rem;
+`
 
 @inject('state', 'actions', 'router')
 @mutate({ mutation: createReportMutation, update: updateReportsConnection })
@@ -68,9 +85,9 @@ class SubmitReport extends React.Component<Props, any> {
       variables: {
         reportData: {
           title,
-          message
+          message,
         },
-        location
+        location,
       },
     })
 
@@ -83,29 +100,47 @@ class SubmitReport extends React.Component<Props, any> {
     const location = state.lastClickedLocation
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <fieldset>
-          <legend>Create report</legend>
-          <p>
-            <label>Title</label>
-            <br />
-            <input value={title} onChange={this.onChange('title')} />
-          </p>
-          <p>
-            <label>Body</label>
-            <br />
-            <textarea value={message} onChange={this.onChange('message')} />
-          </p>
-          <p>
+      <CreateReportForm onSubmit={this.onSubmit}>
+        <Typography variant="headline">
+          Create report
+        </Typography>
+        <FormGroup>
+          <Input
+            value={title}
+            onChange={this.onChange('title')}
+            label="Title"
+            margin="normal"
+            fullWidth
+            autoFocus
+          />
+        </FormGroup>
+        <FormGroup>
+          <Input
+            multiline
+            rowsMax="5"
+            fullWidth
+            value={message}
+            onChange={this.onChange('message')}
+            label="Message"
+            margin="normal"
+          />
+        </FormGroup>
+        <Divider />
+        <FormGroup>
+          <LocationDisplay>
             Location: <code>{JSON.stringify(toJS(location))}</code>
-            <br />
-            <button type="button" onClick={this.pickCurrentLocation}>Use current location</button>
-          </p>
-          <p>
-            <button type="submit">Send</button>
-          </p>
-        </fieldset>
-      </form>
+          </LocationDisplay>
+          <Button variant="outlined" type="button" onClick={this.pickCurrentLocation}>
+            Use current location
+          </Button>
+        </FormGroup>
+        <Divider />
+        <FormGroup>
+          <Button variant="contained" color="primary" type="submit">
+            Send
+          </Button>
+        </FormGroup>
+      </CreateReportForm>
     )
   }
 }

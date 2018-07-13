@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import Map from '../components/Map'
+import Map from './Map'
 import { RendersReports } from '../../types/RendersReports'
 import { inject, observer } from 'mobx-react'
 import { MapModes } from '../stores/MapStore'
@@ -24,10 +24,11 @@ const MapContainer = styled.div`
 interface Props extends RendersReports {
   state?: any
   Report?: ReportActions
+  useBounds?: boolean
 }
 
 export default inject(app('Report'))(
-  observer(({ reports = [], state, Report }: Props) => {
+  observer(({ reports = [], state, Report, useBounds }: Props) => {
     const markers: Marker[] = reports
       .filter(report => !!get(report, 'item.location.lat', 0))
       .map(({ item: { location, type, recommendedMapZoom = 16 }, message, id }) => {
@@ -70,8 +71,13 @@ export default inject(app('Report'))(
     return (
       <MapContainer>
         <Map
+          useBounds={useBounds}
           focusedMarker={state.focusedReport}
-          onMapClick={() => Report.focusReport(null)}
+          onMapClick={() => {
+            if(state.focusedReport !== 'clicked_location') {
+              Report.focusReport(null)
+            }
+          }}
           markers={markers}
         />
       </MapContainer>
