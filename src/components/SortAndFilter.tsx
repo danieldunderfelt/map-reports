@@ -8,21 +8,53 @@ import Select from '../helpers/Select'
 import { ReportActions } from '../../types/ReportActions'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
-import { Button } from '@material-ui/core'
+import { Button, TextField} from '@material-ui/core'
+import { Delete } from '@material-ui/icons'
 
-const SortButton = styled(Button)`
-  width: 4.5rem;
-  text-align: center;
-  outline: 0;
+const Wrapper = styled.div`
+  margin-bottom: 1rem;
 `
 
+const Sorting = styled.div`
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+`
+
+const Filtering = styled.div`
+  padding: 0 1rem;
+`
+
+const SortSelect = styled(Select)`
+  margin-bottom: 1rem;
+`
+
+const SortOptions = styled.div`
+  text-align: center;
+`
+
+const SortButton = styled(Button)``
+
 const FilterItem = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 10rem 1fr 3rem;
+  grid-gap: 0.5rem;
   align-items: center;
   justify-content: space-around;
-  padding: 1rem;
+  padding: 1rem 0.5rem 1rem 1rem;
   margin: 0.5rem 0;
   border: 1px solid #eee;
+
+  button {
+    flex: none;
+    text-align: right;
+    align-items: flex-end;
+    padding: 0;
+    min-width: 0;
+  }
+`
+
+const FilterSearchInput = styled(TextField)`
+  width: 100%;
 `
 
 const sortableKeys = ['title', 'reporter', 'status', 'priority', 'createdAt', 'updatedAt']
@@ -110,7 +142,7 @@ class SortAndFilter extends React.Component<Props, any> {
   renderFilterItem = (
     filterItem: { key: string; value: string },
     index,
-    filterOptions
+    filterOptions,
   ) => {
     const { Report } = this.props
     const keyOptions = this.getFilterKeys()
@@ -125,10 +157,10 @@ class SortAndFilter extends React.Component<Props, any> {
           options={[{ value: '', label: 'Valitse suodatin' }, ...keyOptions]}
           value={filterItem.key}
         />
-        {filterItem.key &&
-          (filterType === 'search' ? (
-            <input
-              type="text"
+        {filterItem.key ? (
+          filterType === 'search' ? (
+            <FilterSearchInput
+              margin="none"
               value={filterItem.value}
               onChange={e =>
                 Report.setFilterValues(index, filterItem.key, e.target.value)
@@ -143,8 +175,17 @@ class SortAndFilter extends React.Component<Props, any> {
                 Report.setFilterValues(index, filterItem.key, e.target.value)
               }
             />
-          ))}
-        <button onClick={() => Report.removeFilter(index)}>-</button>
+          )
+        ) : (
+          <div />
+        )}
+        <Button
+          size="small"
+          color="secondary"
+          onClick={() => Report.removeFilter(index)}
+          aria-label="Delete">
+          <Delete />
+        </Button>
       </FilterItem>
     )
   }
@@ -154,9 +195,9 @@ class SortAndFilter extends React.Component<Props, any> {
     const { filterReports, sortReports } = state
 
     return (
-      <div>
-        <div>
-          <Select
+      <Wrapper>
+        <Sorting>
+          <SortSelect
             name="sort_reports"
             options={sortableKeys.map(sortKey => ({
               value: sortKey,
@@ -165,34 +206,38 @@ class SortAndFilter extends React.Component<Props, any> {
             onChange={this.onChangeSortKey}
             value={sortReports.key}
           />
-          <SortButton
-            variant={sortReports.direction === 'asc' ? 'outlined' : 'text'}
-            type="button"
-            onClick={this.onChangeSortDirection('asc')}>
-            {get(filterLabels, 'asc', 'asc')}
-          </SortButton>{' '}
-          <SortButton
-            variant={sortReports.direction === 'desc' ? 'outlined' : 'text'}
-            type="button"
-            onClick={this.onChangeSortDirection('desc')}>
-            {get(filterLabels, 'desc', 'desc')}
-          </SortButton>
-        </div>
-        <div>
+          <SortOptions>
+            <SortButton
+              variant={sortReports.direction === 'asc' ? 'outlined' : 'text'}
+              type="button"
+              onClick={this.onChangeSortDirection('asc')}>
+              {get(filterLabels, 'asc', 'asc')}
+            </SortButton>{' '}
+            <SortButton
+              variant={sortReports.direction === 'desc' ? 'outlined' : 'text'}
+              type="button"
+              onClick={this.onChangeSortDirection('desc')}>
+              {get(filterLabels, 'desc', 'desc')}
+            </SortButton>
+          </SortOptions>
+        </Sorting>
+        <Filtering>
           <Query query={filterOptionsQuery}>
             {({ data }) =>
               filterReports.map((filterItem, idx) =>
                 this.renderFilterItem(
                   filterItem,
                   idx,
-                  get(data, 'reportFilterOptions', [])
-                )
+                  get(data, 'reportFilterOptions', []),
+                ),
               )
             }
           </Query>
-          <button onClick={() => Report.addReportsFilter()}>Add filter</button>
-        </div>
-      </div>
+          <Button variant="contained" onClick={() => Report.addReportsFilter()}>
+            Add filter
+          </Button>
+        </Filtering>
+      </Wrapper>
     )
   }
 }

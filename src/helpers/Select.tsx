@@ -1,9 +1,13 @@
 import * as React from 'react'
-import { Select, MenuItem } from '@material-ui/core'
+import { NativeSelect, MenuItem } from '@material-ui/core'
+import styled from 'styled-components'
+
+const SelectElement = styled(NativeSelect)`
+  width: 100%;
+`
 
 export default ({ className = '', name = '', value, onChange, options }) => (
-  <Select
-    autoWidth={true}
+  <SelectElement
     name={name}
     className={className}
     value={value}
@@ -11,11 +15,13 @@ export default ({ className = '', name = '', value, onChange, options }) => (
     {options.map(option => {
       const { value = option, label = option } = option
 
+      console.log(value)
+
       return (
-        <MenuItem value={value} key={`select_${name}_${value}`}>
+        <option value={value} key={`select_${name}_${value}`}>
           {label}
-        </MenuItem>
+        </option>
       )
     })}
-  </Select>
+  </SelectElement>
 )

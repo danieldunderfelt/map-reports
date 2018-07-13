@@ -5,7 +5,7 @@ import ReportsList from './ReportsList'
 import { get } from 'lodash'
 import { autorun, toJS } from 'mobx'
 import { reportsQuery } from '../queries/reportsQuery'
-import { app } from "mobx-app"
+import { app } from 'mobx-app'
 import { inject, observer } from 'mobx-react'
 import { query } from '../helpers/Query'
 import { AnyFunction } from '../../types/AnyFunction'
@@ -17,6 +17,7 @@ const ReportsView = styled.div`
 `
 
 const Sidebar = styled.div`
+  padding-top: 1rem;
   height: calc(100vh - 4rem);
   overflow: auto;
   display: flex;
@@ -44,7 +45,6 @@ type Props = {
 })
 @observer
 class ReportsPage extends React.Component<Props, any> {
-
   componentDidMount() {
     const { state, refetch } = this.props
 
