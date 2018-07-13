@@ -37,7 +37,7 @@ function getRandomPosition(lat, lng, distance = 10000) {
   let nLng,
     nLat = Math.asin(
       Math.sin(lat) * Math.cos(radius) +
-        Math.cos(lat) * Math.sin(radius) * Math.cos(angle),
+        Math.cos(lat) * Math.sin(radius) * Math.cos(angle)
     )
   if (Math.cos(nLat) == 0) {
     nLng = lng

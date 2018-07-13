@@ -89,7 +89,10 @@ class SubmitReport extends React.Component<Props, any> {
           title,
           message,
         },
-        location,
+        reportItem: {
+          location,
+          type: 'general'
+        }
       },
     })
 

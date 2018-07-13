@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import got from 'got'
 import neatCsv from 'neat-csv'
-import StopReport from '../reports/StopReport'
 import { Reporter, ReporterConfig } from '../../types/Reporter'
 import GeoJSON from 'geojson'
 
@@ -59,26 +58,6 @@ const UnconnectedStopsReporter = (
       label: 'Unconnected stops',
       geoJSON: JSON.stringify(stopsGeoJSON),
     })
-  }
-
-  function createReport(stop: UnconnectedStop) {
-    const report = StopReport(
-      {
-        title: `Unconnected stop ${stop.stop_code}`,
-        message: `JORE stop ${stop.stop_code} is not connected to an OSM stop.`,
-        reporter: reporterConfig.id,
-      },
-      {
-        stopCode: stop.stop_code,
-        location: {
-          lat: parseFloat(stop.jore_lat),
-          lon: parseFloat(stop.jore_lon),
-        },
-      }
-    )
-
-    const reportsTable = database.table('report')
-    reportsTable.add(report)
   }
 
   return {

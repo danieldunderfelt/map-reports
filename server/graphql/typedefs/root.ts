@@ -21,7 +21,10 @@ const rootTypeDefs = gql`
   }
 
   type Mutation {
-    createReport(reportData: InputReport!, location: InputLocation!): Report
+    createReport(
+      reportData: InputReport!
+      reportItem: InputReportItem
+    ): Report
     setStatus(reportId: String!, newStatus: ReportStatus): Report
     setPriority(reportId: String!, newPriority: ReportPriority): Report
   }

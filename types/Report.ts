@@ -19,6 +19,7 @@ export interface ReportItem {
   location: Location
   type: string
   recommendedMapZoom?: number
+  stopCode?: string
 }
 
 export interface StopItem extends ReportItem {

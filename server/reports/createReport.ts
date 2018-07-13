@@ -1,12 +1,17 @@
 import { merge } from 'lodash'
-import { Report, ReportItem, ReportPriority, ReportStatus } from '../../types/Report'
+import {
+  Report,
+  ReportItem,
+  ReportPriority,
+  ReportStatus,
+} from '../../types/Report'
 import { generate } from 'shortid'
 import { ReportDataInput } from '../../types/CreateReportData'
 
-export function createReport<ItemType = ReportItem>(
+export function createReport(
   reportData: ReportDataInput,
-  reportItem: ItemType
-): Report<ItemType> {
+  reportItem: ReportItem
+): Report {
   const ts = Math.round(new Date().getTime() / 1000)
 
   // Merge the received report data with some defaults for potentially
@@ -23,6 +28,6 @@ export function createReport<ItemType = ReportItem>(
       status: ReportStatus.NEW,
       createdAt: ts,
       updatedAt: ts,
-    },
+    }
   )
 }

@@ -2,20 +2,15 @@ import fuzzysearch from 'fuzzysearch'
 import { orderBy, get, toLower, groupBy, values, merge } from 'lodash'
 import {
   Report,
+  ReportItem,
   ReportPriority as ReportPriorityEnum,
   ReportStatus as ReportStatusEnum,
 } from '../../../types/Report'
 import createCursor from '../../util/createCursor'
-import GeneralReport from '../../reports/GeneralReport'
 import { ManualReportDataInput } from '../../../types/CreateReportData'
-import { Location } from '../../../types/Location'
+import { createReport as reportFactory } from '../../reports/createReport'
 
-const filterableKeys = [
-  'reporter.id',
-  'reporter.type',
-  'status',
-  'priority',
-]
+const filterableKeys = ['reporter.id', 'reporter.type', 'status', 'priority']
 
 // Get the values that these props should be sorted by.
 // Only props listed here use special values, all
@@ -57,7 +52,10 @@ const reportResolvers = db => {
           }
 
           // Use fuzzy search to match the filter value and the report[key] value.
-          return fuzzysearch(toLower(filter.value), toLower(get(reportItem, filter.key, '')))
+          return fuzzysearch(
+            toLower(filter.value),
+            toLower(get(reportItem, filter.key, ''))
+          )
         })
       )
     )
@@ -149,15 +147,18 @@ const reportResolvers = db => {
 
   function createReport(
     _,
-    { reportData, location }: { reportData: ManualReportDataInput; location: Location }
+    {
+      reportData,
+      reportItem,
+    }: {
+      reportData: ManualReportDataInput
+      reportItem: ReportItem
+    }
   ): Report {
-    const report = GeneralReport(
-      {
-        ...reportData,
-        reporter: 'reporter_0',
-      },
-      location
-    )
+    const report = reportFactory({
+      ...reportData,
+      reporter: 'reporter_0' // TODO: add user id when we have users
+    }, reportItem)
 
     reportsDb.add(report)
 

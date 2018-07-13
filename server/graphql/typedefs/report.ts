@@ -16,16 +16,23 @@ const reportTypeDefs = gql`
   }
 
   type ReportItem {
-    location: Location!
     type: String!
+    location: Location!
     recommendedMapZoom: Int
   }
 
   type StopReportItem {
-    location: Location!
     type: String!
+    location: Location!
     stopCode: String!
     recommendedMapZoom: Int
+  }
+
+  input InputReportItem {
+    type: String!
+    location: InputLocation!
+    recommendedMapZoom: Int
+    stopCode: String
   }
 
   union ReportItemType = StopReportItem | ReportItem

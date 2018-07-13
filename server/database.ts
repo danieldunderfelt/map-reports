@@ -31,7 +31,7 @@ function createDb<RecordType extends RecordTypeContract>(
   }
 
   function update(id, newValues) {
-    const item = collection.find(item => item.id === id)
+    const item = collection.find(i => i.id === id)
 
     if (!item) {
       throw new Error(`${name} with ID ${id} not found.`)
