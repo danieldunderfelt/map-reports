@@ -108,6 +108,7 @@ class MissingRoadsMap extends React.Component<any, any> {
 
             const lat = lineMiddle[1]
             const lon = lineMiddle[0]
+            // Stringify feature and base64 encode it to make it work inline
             const featureJson = window.btoa(JSON.stringify(feature))
 
             /**
@@ -129,7 +130,6 @@ class MissingRoadsMap extends React.Component<any, any> {
                 </p>
               </div>
             `
-
             layer.bindPopup(L.popup({ minWidth: 250 }).setContent(popupContent))
           }}
           geoJSON={JSON.parse(missingRoadsDataset.geoJSON)}
