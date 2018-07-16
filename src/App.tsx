@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { hot } from 'react-hot-loader'
 import styled from 'styled-components'
 import Route from './helpers/Route'
 import { inject, observer } from 'mobx-react'
@@ -32,4 +33,4 @@ const App = observer(() => (
   </Root>
 ))
 
-export default App
+export default hot(module)(App)

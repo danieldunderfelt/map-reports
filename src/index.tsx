@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { render } from 'react-dom'
+import * as ReactDOM from 'react-dom'
 import { configure } from 'mobx'
 import client from './helpers/graphqlClient'
 import { createStore } from 'mobx-app'
@@ -39,25 +39,42 @@ injectGlobal`
 `
 
 const router = Router('/', createHistory())
+let state
+let actions
 
-const { state, actions } = createStore(
-  {
-    UI: UIStore,
-    Report: ReportStore,
-    Map: MapStore,
-  },
-  {
-    router,
-    client
-  },
-)
+function createState(initialState = {}) {
+  const stores = createStore(
+    {
+      UI: UIStore(router),
+      Report: ReportStore,
+      Map: MapStore,
+    },
+    initialState
+  )
 
-const app = (
-  <ApolloProvider client={client}>
-    <Provider state={state} actions={actions} router={router}>
-      <App />
-    </Provider>
-  </ApolloProvider>
-)
+  state = stores.state
+  actions = stores.actions
+}
 
-render(app, mountNode)
+createState()
+
+function render() {
+  const app = (
+    <ApolloProvider client={client}>
+      <Provider state={state} actions={actions} router={router}>
+        <App />
+      </Provider>
+    </ApolloProvider>
+  )
+
+  ReactDOM.render(app, mountNode)
+}
+
+render()
+
+if (module.hot) {
+  module.hot.accept(function() {
+    createState(state)
+    render()
+  })
+}

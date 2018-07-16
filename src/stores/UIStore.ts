@@ -1,16 +1,17 @@
 import { action, extendObservable } from 'mobx'
+import { get } from 'lodash'
 
-const UIStore = (state, utils) => {
+const UIStore = router => (state, initialState) => {
   const uiState = extendObservable(state, {
-    route: '/',
+    route: get(initialState, 'route', '/'),
   })
 
   const setCurrentRoute = action(route => {
     uiState.route = route
   })
 
-  setCurrentRoute(utils.router.get())
-  utils.router.listen(setCurrentRoute)
+  setCurrentRoute(router.get())
+  router.listen(setCurrentRoute)
 
   return {
     setCurrentRoute,

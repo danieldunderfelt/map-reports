@@ -45,6 +45,10 @@ type Props = {
 })
 @observer
 class ReportsPage extends React.Component<Props, any> {
+  componentDidCatch(err) {
+    console.log(err)
+  }
+
   componentDidMount() {
     const { state, refetch } = this.props
 

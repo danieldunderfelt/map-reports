@@ -1,15 +1,16 @@
 import { action, extendObservable } from 'mobx'
 import routes from '../routes'
 import { Location } from '../../types/Location'
+import { get } from 'lodash'
 
 export const enum MapModes {
   pick = 'pick',
   display = 'display',
 }
 
-const MapStore = (state, utils) => {
+const MapStore = (state, initialState) => {
   const mapState = extendObservable(state, {
-    lastClickedLocation: null,
+    lastClickedLocation: get(initialState, 'lastClickedLocation', null),
     get mapMode() {
       return mapState.route === routes.CREATE_REPORT
         ? MapModes.pick

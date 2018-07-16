@@ -1,17 +1,21 @@
-import { action, extendObservable, observable } from 'mobx'
+import { action, extendObservable } from 'mobx'
 import { ReportActions } from '../../types/ReportActions'
+import { get } from 'lodash'
 
 const emptyReport = {
   title: '',
   message: '',
 }
 
-const ReportStore = (state): ReportActions => {
+const ReportStore = (state, initialState): ReportActions => {
   const reportState = extendObservable(state, {
-    focusedReport: null,
-    reportDraft: emptyReport,
-    sortReports: { key: 'createdAt', direction: 'desc' },
-    filterReports: [{ key: '', value: '' }],
+    focusedReport: get(initialState, 'focusedReport', null),
+    reportDraft: get(initialState, 'reportDraft', emptyReport),
+    sortReports: get(initialState, 'sortReports', {
+      key: 'createdAt',
+      direction: 'desc',
+    }),
+    filterReports: get(initialState, 'filterReports', [{ key: '', value: '' }]),
   })
 
   const createReport = action(() => {
@@ -21,11 +25,11 @@ const ReportStore = (state): ReportActions => {
   const sortReports = action(
     (
       key = reportState.sortReports.key,
-      direction = reportState.sortReports.direction,
+      direction = reportState.sortReports.direction
     ) => {
       reportState.sortReports.key = key
       reportState.sortReports.direction = direction
-    },
+    }
   )
 
   const addReportsFilter = action((key = '', value = '') => {
@@ -41,7 +45,7 @@ const ReportStore = (state): ReportActions => {
         filter.key = key ? key : filter.key
         filter.value = value
       }
-    },
+    }
   )
 
   const removeFilter = action((index: number) => {
