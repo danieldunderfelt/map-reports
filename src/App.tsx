@@ -8,6 +8,7 @@ import { AppBar, Tabs, Tab } from '@material-ui/core'
 import CreateReportPage from './views/CreateReportPage'
 import Nav from './components/Nav'
 import UnconnectedStopsMap from './views/UnconnectedStopsMap'
+import MissingRoadsMap from './views/MissingRoadsMap'
 
 const Root = styled.div`
   height: 100vh;
@@ -26,6 +27,7 @@ const App = observer(() => (
       <Route path={routes.REPORTS} component={ReportsPage} />
       <Route path={routes.CREATE_REPORT} component={CreateReportPage} />
       <Route path={routes.UNCONNECTED_STOPS} component={UnconnectedStopsMap} />
+      <Route path={routes.MISSING_ROADS} component={MissingRoadsMap} />
     </AppViews>
   </Root>
 ))

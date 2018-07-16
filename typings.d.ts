@@ -44,7 +44,3 @@ declare module 'mobx-app' {
     optName: string,
   )
 }
-
-declare module 'geojson' {
-  export function parse(...any: any[]): any
-}

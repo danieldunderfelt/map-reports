@@ -1,6 +1,7 @@
 import database from './database'
 import UnconnectedStopsReporter from './reporters/UnconnectedStopsReporter'
 import createServer from './graphql/schema'
+import MissingRoadsReporter from './reporters/MissingRoadsReporter'
 
 /**
  * Set up database
@@ -18,7 +19,15 @@ const stopsReporter = UnconnectedStopsReporter(
     id: 'reporter_1',
     type: 'automatic',
   },
-  db,
+  db
+)
+
+const missingRoadsReporter = MissingRoadsReporter(
+  {
+    id: 'reporter_2',
+    type: 'automatic',
+  },
+  db
 )
 
 /**
@@ -26,6 +35,7 @@ const stopsReporter = UnconnectedStopsReporter(
  */
 
 stopsReporter.run()
+missingRoadsReporter.run()
 
 /**
  * Start server

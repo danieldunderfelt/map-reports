@@ -17,6 +17,7 @@ export enum ReportPriority {
 
 export interface ReportItem {
   location: Location
+  feature?: string
   type: string
   recommendedMapZoom?: number
   stopCode?: string

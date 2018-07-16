@@ -38,7 +38,8 @@ interface Props {
   onMapClick?: AnyFunction
   focusedMarker?: string
   geoJSON?: any
-  getMarkerMessage?: AnyFunction
+  pointToLayer?: AnyFunction
+  onEachFeature?: AnyFunction
   Map?: {
     setClickedLocation: (location: Location) => void
     setMapLocation: (location: LatLngExpression) => void
@@ -50,27 +51,37 @@ const MapContainer = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  position: relative;
 
-  > * {
+  > .leaflet-container {
     width: 100%;
     height: 100%;
+    z-index: 0;
   }
+`
+
+const CenterButton = styled.button`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+  z-index: 100;
 `
 
 const defaultMapLocation: LatLng = latLng(60.1689784, 24.9230033)
 const defaultMapZoom = 13
 
-let center = defaultMapLocation
-let zoom = defaultMapZoom
-let bounds
-
 @inject(app('Map'))
 @observer
 class Map extends React.Component<Props, any> {
   mapRef = React.createRef()
+  center = defaultMapLocation
+  zoom = defaultMapZoom
+  bounds
 
   componentWillUpdate({ markers, geoJSON, useBounds = true }: Props) {
-    bounds = useBounds && markers ? this.calculateMarkerBounds(markers) : undefined
+    this.bounds = useBounds && markers ? this.calculateMarkerBounds(markers) : undefined
   }
 
   calculateMarkerBounds = markers => {
@@ -94,25 +105,25 @@ class Map extends React.Component<Props, any> {
   getFocusedPosition = () => {
     const { focusedMarker, markers } = this.props
 
-    const marker = focusedMarker
+    const marker = focusedMarker && markers.length > 0
       ? markers.find(marker => marker.id === focusedMarker)
       : null
 
     if (!marker) {
       return {
-        center,
-        zoom,
+        center: this.center,
+        zoom: this.zoom,
       }
     }
 
     const { zoom: markerZoom = 16, position } = marker
 
-    center = position
-    zoom = markerZoom
+    this.center = position
+    this.zoom = markerZoom
 
     return {
-      center,
-      zoom,
+      center: this.center,
+      zoom: this.zoom,
     }
   }
 
@@ -128,27 +139,29 @@ class Map extends React.Component<Props, any> {
     onMapClick(event)
   }
 
-  trackViewport = ({ center: viewportCenter, zoom: viewportZoom }) => {
-    const centerLatLng = latLng(viewportCenter[0], viewportCenter[1])
-    center = centerLatLng
-    zoom = viewportZoom
+  centerOnHelsinki = e => {
+    e.preventDefault()
+    this.center = defaultMapLocation
+    this.zoom = defaultMapZoom
+    this.setState({})
   }
 
-  defaultMarkerMessage = ({ message }) => message
+  trackViewport = ({ center: viewportCenter = this.center, zoom: viewportZoom = this.zoom }) => {
+    const centerLatLng = latLng(viewportCenter[0], viewportCenter[1])
+    this.center = centerLatLng
+    this.zoom = viewportZoom
+    this.setState({})
+  }
 
   render() {
-    const {
-      markers = [],
-      geoJSON,
-      getMarkerMessage = this.defaultMarkerMessage,
-    } = this.props
+    const { markers = [], geoJSON, pointToLayer, onEachFeature } = this.props
     const { center: mapCenter, zoom: mapZoom } = this.getFocusedPosition()
 
     return (
       <MapContainer>
         <LeafletMap
-          onViewportChange={this.trackViewport}
-          bounds={bounds}
+          onViewportChanged={this.trackViewport}
+          bounds={this.bounds}
           onClick={this.onMapClick}
           center={mapCenter}
           zoom={mapZoom}
@@ -166,13 +179,8 @@ class Map extends React.Component<Props, any> {
             <MarkerClusterGroup>
               <GeoJSON
                 data={geoJSON}
-                pointToLayer={(geoJsonPoint, latlng) => {
-                  const bubble = popup().setContent(getMarkerMessage(geoJsonPoint))
-
-                  return marker(latlng, {
-                    icon: MarkerIcon({ type: 'general' }),
-                  }).bindPopup(bubble)
-                }}
+                onEachFeature={onEachFeature}
+                pointToLayer={pointToLayer}
               />
             </MarkerClusterGroup>
           )}
@@ -196,6 +204,7 @@ class Map extends React.Component<Props, any> {
             </MarkerClusterGroup>
           )}
         </LeafletMap>
+        <CenterButton onClick={this.centerOnHelsinki}>Center on Helsinki</CenterButton>
       </MapContainer>
     )
   }

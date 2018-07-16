@@ -46,6 +46,7 @@ const UnconnectedStopsReporter = (
 
     const unconnectedStopsData: UnconnectedStop[] = await neatCsv(lastFetchedCsv)
 
+    // @ts-ignore
     const stopsGeoJSON = GeoJSON.parse(unconnectedStopsData, {
       Point: ['jore_lat', 'jore_lon'],
       include: ['stop_code'],

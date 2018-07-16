@@ -10,6 +10,8 @@ import { ReportFragment } from '../fragments/ReportFragment'
 import { mutate } from '../helpers/Mutation'
 import routes from '../routes'
 import { action, observable } from 'mobx'
+import { marker, popup } from 'leaflet'
+import MarkerIcon from '../components/MarkerIcon'
 
 const MapArea = styled.div`
   height: calc(100vh - 3rem);
@@ -43,8 +45,9 @@ const enhance = compose(
 
 class UnconnectedStopsMap extends React.Component<any, any> {
   componentDidMount() {
+    // Attach the create issue handler to a global so that the inline js can call it.
     // @ts-ignore
-    window.__handleMarkerClick = this.onCreateIssue
+    window.__handleUnconnectedStopMarkerClick = this.onCreateIssue
   }
 
   onCreateIssue = async (stopId, lat, lon) => {
@@ -83,21 +86,34 @@ class UnconnectedStopsMap extends React.Component<any, any> {
     return (
       <MapArea>
         <Map
-          getMarkerMessage={({ properties, geometry }) => {
+          pointToLayer={({ properties }, latlng) => {
             const stopId = get(properties, 'stop_code', '[Unknown stop]')
-            const lat = get(geometry, 'coordinates[1]')
-            const lon = get(geometry, 'coordinates[0]')
+            const lat = latlng.lat
+            const lon = latlng.lng
 
-            return `
+            /**
+             * The markers created by the geojson layer do not support React-leaflets
+             * React components, so we have to do this with plain HTML.
+             * __handleUnconnectedStopMarkerClick is a global that points to onCreateIssue() in this component.
+             * Make sure to feed it only strings, as numbers may get converted to characters.
+             */
+
+            const popupContent = `
               <div>
                 <div>
                   Stop: ${stopId}
                 </div>
-                <button onclick="__handleMarkerClick('${stopId}', '${lat}', '${lon}')">
+                <button onclick="__handleUnconnectedStopMarkerClick('${stopId}', '${lat}', '${lon}')">
                   Create report
                 </button>
               </div>
             `
+
+            const bubble = popup({ minWidth: 150 }).setContent(popupContent)
+
+            return marker(latlng, {
+              icon: MarkerIcon({ type: 'general' }),
+            }).bindPopup(bubble)
           }}
           geoJSON={JSON.parse(unconnectedStopsDataset.geoJSON)}
         />

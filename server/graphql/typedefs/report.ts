@@ -19,6 +19,7 @@ const reportTypeDefs = gql`
     type: String!
     location: Location!
     recommendedMapZoom: Int
+    feature: String
   }
 
   type StopReportItem {
@@ -33,6 +34,7 @@ const reportTypeDefs = gql`
     location: InputLocation!
     recommendedMapZoom: Int
     stopCode: String
+    feature: String
   }
 
   union ReportItemType = StopReportItem | ReportItem

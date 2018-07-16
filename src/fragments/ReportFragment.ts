@@ -20,6 +20,7 @@ export const ReportFragment = gql`
       ... on ReportItem {
         type
         recommendedMapZoom
+        feature
         location {
           lat
           lon

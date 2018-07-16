@@ -14,8 +14,8 @@ import { Button, TextField, Divider, Typography} from '@material-ui/core'
 import styled from 'styled-components'
 
 const createReportMutation = gql`
-  mutation createReport($reportData: InputReport!, $location: InputLocation!) {
-    createReport(reportData: $reportData, location: $location) {
+  mutation createReport($reportData: InputReport!, $reportItem: InputReportItem!) {
+    createReport(reportData: $reportData, reportItem: $reportItem) {
       ...ReportFields
     }
   }

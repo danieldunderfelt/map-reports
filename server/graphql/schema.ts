@@ -8,7 +8,7 @@ import reporter from './typedefs/reporter'
 import report from './typedefs/report'
 
 // Resolvers
-import createResolvers from './resolvers/resolvers'
+import createResolvers from './resolvers/createResolvers'
 
 const typeDefs = [root, util, location, reporter, report]
 
