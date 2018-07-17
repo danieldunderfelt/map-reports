@@ -9,7 +9,6 @@ import Select from '../helpers/Select'
 import MissingRoadsMap from '../components/MissingRoadsMap'
 import UnconnectedStopsMap from '../components/UnconnectedStopsMap'
 import { get } from 'lodash'
-import { app } from 'mobx-app'
 
 const datasetOptionsQuery = gql`
   {
