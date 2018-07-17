@@ -8,8 +8,9 @@ import ReportsPage from './views/ReportsPage'
 import { AppBar, Tabs, Tab } from '@material-ui/core'
 import CreateReportPage from './views/CreateReportPage'
 import Nav from './components/Nav'
-import UnconnectedStopsMap from './views/UnconnectedStopsMap'
-import MissingRoadsMap from './views/MissingRoadsMap'
+import UnconnectedStopsMap from './components/UnconnectedStopsMap'
+import MissingRoadsMap from './components/MissingRoadsMap'
+import InspectDatasets from './views/InspectDatasets'
 
 const Root = styled.div`
   height: 100vh;
@@ -27,8 +28,7 @@ const App = observer(() => (
     <AppViews>
       <Route path={routes.REPORTS} component={ReportsPage} />
       <Route path={routes.CREATE_REPORT} component={CreateReportPage} />
-      <Route path={routes.UNCONNECTED_STOPS} component={UnconnectedStopsMap} />
-      <Route path={routes.MISSING_ROADS} component={MissingRoadsMap} />
+      <Route path={routes.INSPECT_DATASETS} component={InspectDatasets} />
     </AppViews>
   </Root>
 ))

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { compose } from 'react-apollo'
 import { query } from '../helpers/Query'
 import gql from 'graphql-tag'
-import Map from '../components/Map'
+import Map from './Map'
 import { inject, observer } from 'mobx-react'
 import { get } from 'lodash'
 import styled, { injectGlobal } from 'styled-components'
@@ -12,6 +12,9 @@ import * as prettyJson from 'prettyjson'
 import * as L from 'leaflet'
 
 import middleOfLine from '../helpers/middleOfLine'
+import { DatasetView } from '../../types/DatasetView'
+import { AnyFunction } from '../../types/AnyFunction'
+import { Dataset } from '../../types/Dataset'
 const MapArea = styled.div`
   height: calc(100vh - 3rem);
 `
@@ -22,9 +25,9 @@ injectGlobal`
   }
 `
 
-const datasetsQuery = gql`
-  {
-    datasets {
+const datasetQuery = gql`
+  query datasetData($id: String!) {
+    dataset(id: $id) {
       id
       label
       geoJSON
@@ -42,13 +45,18 @@ const createStopReportMutation = gql`
 `
 
 const enhance = compose(
-  inject('router'),
-  query({ query: datasetsQuery }),
+  query({ query: datasetQuery, getVariables: ({ datasetId }) => ({ id: datasetId }) }),
   mutate({ mutation: createStopReportMutation }),
   observer
 )
 
-class MissingRoadsMap extends React.Component<any, any> {
+interface Props extends DatasetView {
+  mutate?: AnyFunction
+  queryData?: { dataset: Dataset },
+  loading?: boolean
+}
+
+class MissingRoadsMap extends React.Component<Props, any> {
   componentDidMount() {
     // Attach the create issue handler to a global so that the inline js can call it.
     // @ts-ignore
@@ -79,13 +87,11 @@ class MissingRoadsMap extends React.Component<any, any> {
   }
 
   render() {
-    const { queryData } = this.props
+    const { queryData, loading } = this.props
 
-    const missingRoadsDataset = get(queryData, 'datasets', []).find(
-      d => d.id === 'missing_roads'
-    )
+    const missingRoadsDataset = get(queryData, 'dataset', null)
 
-    if (!missingRoadsDataset) {
+    if (!missingRoadsDataset || loading) {
       return 'Loading...'
     }
 

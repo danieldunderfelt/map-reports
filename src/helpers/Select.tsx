@@ -6,13 +6,16 @@ const SelectElement = styled(NativeSelect)`
   width: 100%;
 `
 
-export default ({ className = '', name = '', value, onChange, options }) => (
-  <SelectElement
-    name={name}
-    className={className}
-    value={value}
-    onChange={onChange}>
-    {options.map(option => {
+export default ({
+  className = '',
+  name = '',
+  value,
+  onChange,
+  options = [],
+  children = options,
+}) => (
+  <SelectElement name={name} className={className} value={value} onChange={onChange}>
+    {children.map(option => {
       const { value = option, label = option } = option
 
       return (

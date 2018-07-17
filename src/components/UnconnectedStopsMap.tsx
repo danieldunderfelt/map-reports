@@ -2,24 +2,25 @@ import * as React from 'react'
 import { compose } from 'react-apollo'
 import { query } from '../helpers/Query'
 import gql from 'graphql-tag'
-import Map from '../components/Map'
+import Map from './Map'
 import { inject, observer } from 'mobx-react'
 import { get } from 'lodash'
 import styled from 'styled-components'
 import { ReportFragment } from '../fragments/ReportFragment'
 import { mutate } from '../helpers/Mutation'
-import routes from '../routes'
-import { action, observable } from 'mobx'
 import { marker, popup } from 'leaflet'
-import MarkerIcon from '../components/MarkerIcon'
+import MarkerIcon from './MarkerIcon'
+import { DatasetView } from '../../types/DatasetView'
+import { AnyFunction } from '../../types/AnyFunction'
+import { Dataset } from '../../types/Dataset'
 
 const MapArea = styled.div`
   height: calc(100vh - 3rem);
 `
 
-const datasetsQuery = gql`
-  {
-    datasets {
+const datasetQuery = gql`
+  query datasetData($id: String!) {
+    dataset(id: $id) {
       id
       label
       geoJSON
@@ -37,13 +38,18 @@ const createStopReportMutation = gql`
 `
 
 const enhance = compose(
-  inject('router'),
-  query({ query: datasetsQuery }),
+  query({ query: datasetQuery, getVariables: ({ datasetId }) => ({ id: datasetId }) }),
   mutate({ mutation: createStopReportMutation }),
   observer
 )
 
-class UnconnectedStopsMap extends React.Component<any, any> {
+interface Props extends DatasetView {
+  mutate?: AnyFunction
+  queryData?: { dataset: Dataset }
+  loading?: boolean
+}
+
+class UnconnectedStopsMap extends React.Component<Props, any> {
   componentDidMount() {
     // Attach the create issue handler to a global so that the inline js can call it.
     // @ts-ignore
@@ -73,13 +79,11 @@ class UnconnectedStopsMap extends React.Component<any, any> {
   }
 
   render() {
-    const { queryData } = this.props
+    const { queryData, loading } = this.props
 
-    const unconnectedStopsDataset = get(queryData, 'datasets', []).find(
-      d => d.id === 'unconnected_stops'
-    )
+    const unconnectedStopsDataset = get(queryData, 'dataset', null)
 
-    if (!unconnectedStopsDataset) {
+    if (!unconnectedStopsDataset || loading) {
       return 'Loading...'
     }
 

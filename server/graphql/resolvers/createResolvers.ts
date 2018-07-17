@@ -16,7 +16,8 @@ const createResolvers = (db): any => {
       reporters: reporters.allReporters,
 
       // datasets
-      datasets: () => db.table('datasets').get()
+      datasets: () => db.table('datasets').get(),
+      dataset: (_, { id }) => db.table('datasets').get(id)
     },
     Mutation: {
       // Reports

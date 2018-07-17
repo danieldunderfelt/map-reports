@@ -18,6 +18,7 @@ const rootTypeDefs = gql`
     ): ReportsConnection
     reporters: [Reporter]
     datasets: [Dataset]
+    dataset(id: String!): Dataset
   }
 
   type Mutation {
