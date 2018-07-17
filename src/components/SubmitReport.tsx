@@ -24,6 +24,9 @@ const createReportMutation = gql`
 
 type Props = {
   mutate?: AnyFunction
+  Report?: {
+    focusReport: (reportId?: string) => void
+  }
   state?: {
     lastClickedLocation?: Location
     reportDraft: Report
@@ -79,7 +82,7 @@ class SubmitReport extends React.Component<Props, any> {
   onSubmit = e => {
     e.preventDefault()
 
-    const { mutate, state, router } = this.props
+    const { mutate, state, router, Report } = this.props
     const { title, message } = state.reportDraft
     const location = state.lastClickedLocation
 
@@ -96,6 +99,7 @@ class SubmitReport extends React.Component<Props, any> {
       },
     })
 
+    Report.focusReport(null)
     router.go(routes.REPORTS)
   }
 
