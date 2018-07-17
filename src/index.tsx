@@ -1,12 +1,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { configure } from 'mobx'
-import client from './helpers/graphqlClient'
+import { configure, toJS } from 'mobx'
 import { createStore } from 'mobx-app'
 import UIStore from './stores/UIStore'
 import { Router } from 'pathricia'
-import { ApolloProvider } from 'react-apollo'
-import { Provider } from 'mobx-react'
 import createHistory from 'history/createBrowserHistory'
 import App from './App'
 import 'normalize.css'
@@ -15,13 +12,6 @@ import { injectGlobal } from 'styled-components'
 import MapStore from './stores/MapStore'
 import ReportStore from './stores/ReportStore'
 import color from './style/colors'
-
-configure({
-  computedRequiresReaction: true,
-  enforceActions: true,
-})
-
-const mountNode = document.getElementById('app')
 
 injectGlobal`
   * {
@@ -38,11 +28,19 @@ injectGlobal`
   ${typography}
 `
 
+configure({
+  computedRequiresReaction: true,
+  enforceActions: true,
+})
+
 const router = Router('/', createHistory())
+const mountNode = document.getElementById('app')
+
 let state
 let actions
+let prevState = {}
 
-function createState(initialState = {}) {
+function initStore(initialState = {}) {
   const stores = createStore(
     {
       UI: UIStore(router),
@@ -56,25 +54,27 @@ function createState(initialState = {}) {
   actions = stores.actions
 }
 
-createState()
-
-function render() {
-  const app = (
-    <ApolloProvider client={client}>
-      <Provider state={state} actions={actions} router={router}>
-        <App />
-      </Provider>
-    </ApolloProvider>
+function render(Component) {
+  ReactDOM.render(
+    <Component state={state} actions={actions} router={router} />,
+    mountNode
   )
-
-  ReactDOM.render(app, mountNode)
 }
 
-render()
+initStore(prevState)
+render(App)
 
+// @ts-ignore
 if (module.hot) {
-  module.hot.accept(function() {
-    createState(state)
-    render()
+  // @ts-ignore
+  module.hot.accept(() => {
+    initStore(prevState)
+    const nextApp = require('./App').default
+    render(nextApp)
+  })
+
+  // @ts-ignore
+  module.hot.dispose(() => {
+    prevState = toJS(state)
   })
 }

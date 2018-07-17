@@ -26,6 +26,7 @@ const rootTypeDefs = gql`
       reportData: InputReport!
       reportItem: InputReportItem
     ): Report
+    removeReport(reportId: String!): Boolean
     setStatus(reportId: String!, newStatus: ReportStatus): Report
     setPriority(reportId: String!, newPriority: ReportPriority): Report
   }

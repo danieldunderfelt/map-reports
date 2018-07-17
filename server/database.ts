@@ -50,11 +50,23 @@ function createDb<RecordType extends RecordTypeContract>(
     return merge(dbItem, item)
   }
 
+  function remove(id) {
+    const itemIndex = collection.findIndex(i => i.id === id)
+
+    if(itemIndex === -1) {
+      return 0
+    }
+
+    const deleted = collection.splice(itemIndex, 1)
+    return deleted.length
+  }
+
   return {
     get,
     add,
     update,
     updateOrAdd,
+    remove
   }
 }
 

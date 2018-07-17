@@ -9,6 +9,12 @@ import { get } from 'lodash'
 import { SlideDown } from 'react-slidedown'
 import * as prettyJson from 'prettyjson'
 import 'react-slidedown/lib/slidedown.css'
+import gql from 'graphql-tag'
+import { mutate } from '../helpers/Mutation'
+import { observer } from 'mobx-react'
+import { compose } from 'react-apollo'
+import { Button } from '@material-ui/core'
+import { Delete } from '@material-ui/icons'
 
 const Report = styled.div<{ type: string }>`
   cursor: pointer;
@@ -26,10 +32,24 @@ const Report = styled.div<{ type: string }>`
 `
 
 const ReportHeading = styled.header`
+  display: grid;
+  grid-template-columns: 1fr 3rem;
+  grid-gap: 1rem;
+  align-items: center;
+  justify-content: space-around;
+
   > h2 {
     font-size: 1em;
     margin-top: 0;
     margin-bottom: 0;
+  }
+
+  > button {
+    flex: none;
+    text-align: right;
+    align-items: flex-end;
+    padding: 0;
+    min-width: 0;
   }
 `
 
@@ -63,31 +83,55 @@ const ReportBody = styled.article`
   }
 `
 
+const removeReportMutation = gql`
+  mutation removeReport($id: String!) {
+    removeReport(reportId: $id)
+  }
+`
+
 const ReportContent = styled.div<{ json?: boolean }>`
   padding: 1rem 0 0;
-  
-  ${({ json = false }) => json ? `
-    white-space: pre-line;
-  ` : ''}
+  ${({ json = false }) => (json ? 'white-space: pre-line;' : '')};
 `
+
+const enhance = compose(
+  mutate({ mutation: removeReportMutation }),
+  observer
+)
 
 type Props = {
   report: Report
   onClick: AnyFunction
+  mutate?: AnyFunction
+  onRemove?: AnyFunction
 }
 
 class ReportItem extends React.Component<Props, any> {
-
   state = {
-    isOpen: false
+    isOpen: false,
   }
 
   onHeadingClick = e => {
     e.preventDefault()
 
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !this.state.isOpen,
     })
+  }
+
+  onRemoveClick = async e => {
+    e.preventDefault()
+    e.stopPropagation() // Do not select the report on the map
+
+    const { onRemove = () => {}, mutate, report } = this.props
+
+    await mutate({
+      variables: {
+        id: report.id,
+      },
+    })
+
+    onRemove()
   }
 
   render() {
@@ -97,6 +141,13 @@ class ReportItem extends React.Component<Props, any> {
       <Report type={report.item.type} onClick={onClick}>
         <ReportHeading onClick={this.onHeadingClick}>
           <h2>{report.title}</h2>
+          <Button
+            size="small"
+            color="secondary"
+            onClick={this.onRemoveClick}
+            aria-label="Delete">
+            <Delete />
+          </Button>
         </ReportHeading>
         <ReportBody>
           <h4>
@@ -110,14 +161,12 @@ class ReportItem extends React.Component<Props, any> {
           </div>
         </ReportBody>
         <SlideDown closed={!this.state.isOpen}>
-          {report.message && (
-            <ReportContent>
-              {report.message}
-            </ReportContent>
-          )}
+          {report.message && <ReportContent>{report.message}</ReportContent>}
           {get(report, 'item.feature', '') && (
             <ReportContent json>
-              {prettyJson.render(JSON.parse(get(report, 'item.feature', '{}')).properties)}
+              {prettyJson.render(
+                JSON.parse(get(report, 'item.feature', '{}')).properties
+              )}
             </ReportContent>
           )}
         </SlideDown>
@@ -126,4 +175,4 @@ class ReportItem extends React.Component<Props, any> {
   }
 }
 
-export default ReportItem
+export default enhance(ReportItem)

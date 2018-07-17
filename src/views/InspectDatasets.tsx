@@ -74,14 +74,12 @@ class InspectDatasets extends React.Component<any, State> {
           <Typography gutterBottom variant="headline" component="h2">
             Tarkastastele ja raportoi
           </Typography>
-          <Typography component="p">
-            <Select value={selectedDataset} onChange={this.onChangeDataset}>
-              {[
-                { value: '', label: 'Valitse kartta' },
-                ...queryData.datasets.map(({ id, label }) => ({ value: id, label })),
-              ]}
-            </Select>
-          </Typography>
+          <Select value={selectedDataset} onChange={this.onChangeDataset}>
+            {[
+              { value: '', label: 'Valitse kartta' },
+              ...queryData.datasets.map(({ id, label }) => ({ value: id, label })),
+            ]}
+          </Select>
         </OptionsBox>
       </DatasetsWrapper>
     )

@@ -45,9 +45,6 @@ type Props = {
 })
 @observer
 class ReportsPage extends React.Component<Props, any> {
-  componentDidCatch(err) {
-    console.log(err)
-  }
 
   componentDidMount() {
     const { state, refetch } = this.props
@@ -58,7 +55,7 @@ class ReportsPage extends React.Component<Props, any> {
   }
 
   render() {
-    const { queryData, fetchMore } = this.props
+    const { queryData, fetchMore, refetch } = this.props
 
     const queryName = 'reportsConnection'
     const reports = get(queryData, `${queryName}.edges`, []).map(edge => edge.node)
@@ -66,7 +63,7 @@ class ReportsPage extends React.Component<Props, any> {
     return (
       <ReportsView>
         <Sidebar>
-          <ReportsList reports={reports} fetchMore={fetchMore} />
+          <ReportsList reports={reports} fetchMore={fetchMore} refetch={refetch} />
         </Sidebar>
         <MapArea>
           <ReportsMap reports={reports} />

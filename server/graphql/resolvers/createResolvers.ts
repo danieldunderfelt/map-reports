@@ -22,6 +22,7 @@ const createResolvers = (db): any => {
     Mutation: {
       // Reports
       createReport: reports.createReport,
+      removeReport: reports.removeReport,
       setStatus: reports.setStatus,
       setPriority: reports.setPriority,
     },

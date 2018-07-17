@@ -165,6 +165,10 @@ const reportResolvers = db => {
     return report
   }
 
+  function removeReport(_, { reportId }): boolean {
+    return reportsDb.remove(reportId) > 0
+  }
+
   function setStatus(_, { reportId, newStatus }): Report {
     return reportsDb.update(reportId, { status: newStatus })
   }
@@ -189,6 +193,7 @@ const reportResolvers = db => {
     setStatus,
     setPriority,
     resolveReportItemType,
+    removeReport,
   }
 }
 

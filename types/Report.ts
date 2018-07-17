@@ -23,10 +23,6 @@ export interface ReportItem {
   stopCode?: string
 }
 
-export interface StopItem extends ReportItem {
-  stopCode: string
-}
-
 export interface Report<ItemType = ReportItem> {
   id: string
   title: string

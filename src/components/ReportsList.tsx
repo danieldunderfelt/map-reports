@@ -7,6 +7,7 @@ import { Report as ReportType } from '../../types/Report'
 import { ReportActions } from '../../types/ReportActions'
 import styled from 'styled-components'
 import Report from './Report'
+import { AnyFunction } from '../../types/AnyFunction'
 
 const List = styled.div`
   width: 100%;
@@ -23,6 +24,7 @@ interface Props extends RendersReports {
       value: string
     }[]
   }
+  refetch: AnyFunction
   reports: ReportType[]
   Report?: ReportActions
 }
@@ -30,6 +32,10 @@ interface Props extends RendersReports {
 @inject(app('Report'))
 @observer
 class ReportsList extends React.Component<Props, any> {
+  onRemoveReport = () => {
+    this.props.refetch()
+  }
+
   render() {
     const { reports = [], Report: ReportStore, fetchMore } = this.props
 
@@ -38,6 +44,7 @@ class ReportsList extends React.Component<Props, any> {
         <SortAndFilter reports={reports} />
         {reports.map(report => (
           <Report
+            onRemove={this.onRemoveReport}
             key={report.id}
             report={report}
             onClick={() => ReportStore.focusReport(report.id)}
