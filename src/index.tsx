@@ -5,7 +5,6 @@ import { createStore } from 'mobx-app'
 import UIStore from './stores/UIStore'
 import { Router } from 'pathricia'
 import createHistory from 'history/createBrowserHistory'
-import App from './App'
 import 'normalize.css'
 import { typography } from './style/typography'
 import { injectGlobal } from 'styled-components'
@@ -54,26 +53,26 @@ function initStore(initialState = {}) {
   actions = stores.actions
 }
 
-function render(Component) {
+function render() {
+  const App = require('./App').default
+
   ReactDOM.render(
-    <Component state={state} actions={actions} router={router} />,
+    <App state={state} actions={actions} router={router} />,
     mountNode
   )
 }
 
 initStore(prevState)
-render(App)
+render()
 
-// @ts-ignore
+declare const module: any
+
 if (module.hot) {
-  // @ts-ignore
   module.hot.accept(() => {
     initStore(prevState)
-    const nextApp = require('./App').default
-    render(nextApp)
+    render()
   })
 
-  // @ts-ignore
   module.hot.dispose(() => {
     prevState = toJS(state)
   })

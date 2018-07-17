@@ -41,6 +41,6 @@ declare module 'mobx-app' {
   export function collection(
     collection: IObservableObject | IObservableArray,
     factoryOrName: string | AnyFunction,
-    optName: string,
+    optName: string
   )
 }
