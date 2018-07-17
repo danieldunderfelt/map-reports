@@ -141,7 +141,7 @@ class Map extends React.Component<Props, any> {
 
     this.setState({
       center: position,
-      zoom: markerZoom,
+      zoom: markerZoom || 16,
     })
   }
 

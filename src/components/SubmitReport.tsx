@@ -10,7 +10,7 @@ import { Report } from '../../types/Report'
 import { RouterType } from 'pathricia'
 import routes from '../routes'
 import { ReportActions } from '../../types/ReportActions'
-import { Button, TextField, Divider, Typography} from '@material-ui/core'
+import { Button, TextField, Divider, Typography } from '@material-ui/core'
 import styled from 'styled-components'
 
 const createReportMutation = gql`
@@ -96,8 +96,9 @@ class SubmitReport extends React.Component<Props, any> {
         },
         reportItem: {
           location,
-          type: 'general'
-        }
+          type: 'general',
+          recommendedMapZoom: 16,
+        },
       },
     })
 
@@ -112,9 +113,7 @@ class SubmitReport extends React.Component<Props, any> {
 
     return (
       <CreateReportForm onSubmit={this.onSubmit}>
-        <Typography variant="headline">
-          Create report
-        </Typography>
+        <Typography variant="headline">Create report</Typography>
         <FormGroup>
           <Input
             value={title}
