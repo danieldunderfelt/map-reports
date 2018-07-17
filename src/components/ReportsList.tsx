@@ -24,7 +24,7 @@ interface Props extends RendersReports {
       value: string
     }[]
   }
-  refetch: AnyFunction
+  refetchReports: AnyFunction
   reports: ReportType[]
   Report?: ReportActions
 }
@@ -33,7 +33,7 @@ interface Props extends RendersReports {
 @observer
 class ReportsList extends React.Component<Props, any> {
   onRemoveReport = () => {
-    this.props.refetch()
+    this.props.refetchReports()
   }
 
   render() {

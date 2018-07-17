@@ -9,6 +9,7 @@ import Select from '../helpers/Select'
 import MissingRoadsMap from '../components/MissingRoadsMap'
 import UnconnectedStopsMap from '../components/UnconnectedStopsMap'
 import { get } from 'lodash'
+import { app } from 'mobx-app'
 
 const datasetOptionsQuery = gql`
   {
@@ -32,7 +33,7 @@ const OptionsBox = styled(Card)`
 `
 
 const enhance = compose(
-  inject('state', 'router'),
+  inject('actions', 'state', 'router'),
   query({ query: datasetOptionsQuery, fetchPolicy: 'cache-first' }),
   observer
 )
@@ -42,39 +43,29 @@ const datasetMaps = {
   unconnected_stops: UnconnectedStopsMap,
 }
 
-type State = {
-  selectedDataset: string
-}
-
-class InspectDatasets extends React.Component<any, State> {
-  state: State = {
-    selectedDataset: '',
-  }
-
+class InspectDatasets extends React.Component<any, any> {
   onChangeDataset = e => {
-    this.setState({
-      selectedDataset: e.target.value,
-    })
+    const { actions: { UI } } = this.props
+    UI.selectDataset(e.target.value)
   }
 
   render() {
-    const { queryData, loading } = this.props
-    const { selectedDataset } = this.state
+    const { queryData, loading, state } = this.props
 
     if (!queryData || loading) {
       return 'Loading...'
     }
 
-    const MapComponent = get(datasetMaps, selectedDataset, null)
+    const MapComponent = get(datasetMaps, state.selectedDataset, null)
 
     return (
       <DatasetsWrapper>
-        {MapComponent && <MapComponent datasetId={selectedDataset} />}
+        {MapComponent && <MapComponent datasetId={state.selectedDataset} />}
         <OptionsBox>
           <Typography gutterBottom variant="headline" component="h2">
             Tarkastastele ja raportoi
           </Typography>
-          <Select value={selectedDataset} onChange={this.onChangeDataset}>
+          <Select value={state.selectedDataset} onChange={this.onChangeDataset}>
             {[
               { value: '', label: 'Valitse kartta' },
               ...queryData.datasets.map(({ id, label }) => ({ value: id, label })),

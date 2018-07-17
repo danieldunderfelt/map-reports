@@ -45,7 +45,6 @@ type Props = {
 })
 @observer
 class ReportsPage extends React.Component<Props, any> {
-
   componentDidMount() {
     const { state, refetch } = this.props
 
@@ -63,7 +62,7 @@ class ReportsPage extends React.Component<Props, any> {
     return (
       <ReportsView>
         <Sidebar>
-          <ReportsList reports={reports} fetchMore={fetchMore} refetch={refetch} />
+          <ReportsList reports={reports} fetchMore={fetchMore} refetchReports={refetch} />
         </Sidebar>
         <MapArea>
           <ReportsMap reports={reports} />
