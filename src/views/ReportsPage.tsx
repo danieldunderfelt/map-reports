@@ -13,7 +13,7 @@ import { AnyFunction } from '../../types/AnyFunction'
 const ReportsView = styled.div`
   height: 100%;
   display: grid;
-  grid-template-columns: 25rem 1fr;
+  grid-template-columns: 30rem 1fr;
 `
 
 const Sidebar = styled.div`

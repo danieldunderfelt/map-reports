@@ -53,6 +53,8 @@ const LocationDisplay = styled.div`
   margin-bottom: 1rem;
 `
 
+// If we ant the router, app() from mobx-app cannot be used.
+// I might fix this in a later mobx-app version.
 @inject('state', 'actions', 'router')
 @mutate({ mutation: createReportMutation, update: updateReportsConnection })
 @observer
@@ -82,7 +84,7 @@ class SubmitReport extends React.Component<Props, any> {
   onSubmit = e => {
     e.preventDefault()
 
-    const { mutate, state, router, Report } = this.props
+    const { mutate, state, router, actions } = this.props
     const { title, message } = state.reportDraft
     const location = state.lastClickedLocation
 
@@ -99,7 +101,7 @@ class SubmitReport extends React.Component<Props, any> {
       },
     })
 
-    Report.focusReport(null)
+    actions.Report.focusReport(null)
     router.go(routes.REPORTS)
   }
 

@@ -2,7 +2,7 @@ import * as React from 'react'
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 import { Report, ReportPriority as ReportPriorityEnum } from '../../types/Report'
-import { filterOptionsQuery } from './SortAndFilter'
+import { filterOptionsQuery } from './FilterReports'
 
 type Props = {
   report: Report

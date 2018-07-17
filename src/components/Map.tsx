@@ -100,7 +100,7 @@ class Map extends React.Component<Props, any> {
     bounds: null,
   }
 
-  static getDerivedStateFromProps({ useBounds, markers }, state) {
+  static getDerivedStateFromProps({ useBounds, markers }) {
     if (useBounds && markers && markers.length > 0) {
       const bounds = calculateMarkerBounds(markers)
 
